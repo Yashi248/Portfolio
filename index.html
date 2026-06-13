@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Yashwanth Veldanda | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/math/SimplexNoise.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/shaders/SSAOShader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/SSAOPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+<style>
+:root{
+  --cream:#f5f0e6;
+  --cream2:#ece4d3;
+  --cream3:#ded4bf;
+  --gold:#c9963a;
+  --gold2:#e6c47a;
+  --charcoal:#171614;
+  --ink:#0f0e0d;
+  --soft:#62594d;
+  --muted:#9a8f80;
+  --line:rgba(23,22,20,.12);
+  --maroon:#8c1d40;
+  --asu:#ffc627;
+  --white:#fffaf0;
+  --blue:#dfeaf0;
+  --page:#f0f2f4;
+  --display:"Syne",Inter,ui-sans-serif,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto !important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--page);
+  color:var(--charcoal);
+  overflow-x:hidden;
+  cursor:none;
+}
+h1,h2,.footer-inner h2,.hero-title{font-family:var(--display);}
+a{color:inherit}
+button,input,textarea{font:inherit}
+::selection{background:var(--gold2);color:var(--ink)}
+
+#cursor{
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:9999;
+  width:10px;
+  height:10px;
+  pointer-events:none;
+  border-radius:999px;
+  background:var(--gold);
+  transform:translate(-50%,-50%);
+  transition:transform .16s ease,background .2s ease,opacity .2s ease;
+  mix-blend-mode:multiply;
+}
+#cursor.big{transform:translate(-50%,-50%) scale(3.8);background:var(--charcoal);opacity:.75}
+
+.topbar{
+  position:fixed;
+  inset:0 0 auto 0;
+  z-index:200;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 32px;
+  color:var(--charcoal);
+  transition:background .25s ease,border-color .25s ease,color .25s ease;
+  border-bottom:1px solid transparent;
+}
+.topbar.scrolled{
+  background:rgba(240,242,244,.88);
+  backdrop-filter:blur(14px);
+  border-color:rgba(23,22,20,.08);
+}
+.brand{
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:.2em;
+  font-weight:950;
+  transition:color .2s ease;
+}
+.brand:hover{color:var(--gold)}
+.nav-links{
+  display:flex;
+  gap:26px;
+  list-style:none;
+}
+.nav-links a{
+  text-decoration:none;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:10px;
+  font-weight:800;
+  color:var(--soft);
+  transition:color .2s ease;
+}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a.active{color:var(--gold)}
+.nav-action{
+  text-decoration:none;
+  border:1px solid rgba(23,22,20,.16);
+  border-radius:999px;
+  padding:9px 14px;
+  text-transform:uppercase;
+  font-size:10px;
+  letter-spacing:.13em;
+  font-weight:900;
+}
+
+.section-label{
+  text-transform:uppercase;
+  color:var(--gold);
+  letter-spacing:.2em;
+  font-size:11px;
+  font-weight:900;
+  margin-bottom:18px;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+#hero{
+  min-height:96vh;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  align-items:end;
+  gap:32px;
+  padding:120px 32px 56px;
+  position:relative;
+  z-index:14;
+  overflow:hidden;
+}
+.hero-copy{max-width:760px;position:relative;z-index:2}
+.hero-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid rgba(23,22,20,.13);
+  padding:9px 13px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:10px;
+  font-weight:900;
+  margin-bottom:28px;
+}
+.hero-kicker::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--gold);
+  animation:dotPulse 2.4s ease-in-out infinite;
+}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
+.hero-title{
+  font-size:clamp(42px,min(7.8vw,13vh),118px);
+  line-height:.86;
+  letter-spacing:-.01em;
+  font-weight:950;
+}
+.hero-title span{color:var(--gold)}
+.hero-sub{
+  max-width:580px;
+  margin-top:30px;
+  color:var(--soft);
+  font-size:clamp(17px,2vw,22px);
+  line-height:1.55;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:0 18px;
+  border:1px solid var(--charcoal);
+  text-decoration:none;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:11px;
+  font-weight:900;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.btn.primary{background:var(--charcoal);color:var(--cream)}
+.btn.primary:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn.ghost:hover{background:var(--charcoal);color:var(--cream)}
+.hero-aside{
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  gap:2px;
+  padding-bottom:8px;
+}
+.signal-row{
+  display:grid;
+  grid-template-columns:82px 1fr;
+  gap:20px;
+  padding:18px 0;
+  border-top:1px solid var(--line);
+}
+.signal-row:last-child{border-bottom:1px solid var(--line)}
+.signal-num{
+  font-size:12px;
+  letter-spacing:.14em;
+  color:var(--gold);
+  font-weight:900;
+}
+.signal-row h3{font-size:18px;line-height:1.05;margin-bottom:6px}
+.signal-row p{color:var(--soft);font-size:13px;line-height:1.55}
+.scroll-note{
+  position:absolute;
+  left:32px;
+  bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--soft);
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:10px;
+  font-weight:900;
+}
+.scroll-note::after{
+  content:"";
+  width:44px;
+  height:1px;
+  background:var(--muted);
+  transform-origin:left;
+  animation:linePulse 1.8s ease-in-out infinite;
+}
+@keyframes linePulse{50%{transform:scaleX(1.7);opacity:.38}}
+
+#journey{
+  position:relative;
+  z-index:12;
+  background:transparent;
+}
+.journey-wrap{
+  min-height:760vh;
+  position:relative;
+}
+.story-panel{
+  position:sticky;
+  top:0;
+  height:100vh;
+  width:min(300px,calc(100vw - 48px));
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:0 0 48px 42px;
+  z-index:20;
+  pointer-events:none;
+}
+.chapter-stack{
+  position:relative;
+  min-height:120px;
+  margin-bottom:18px;
+}
+.chapter{
+  position:absolute;
+  inset:auto 0 0 0;
+  opacity:0;
+  transform:translateY(14px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+.chapter.active{opacity:1;transform:none}
+.chapter .section-label{
+  font-size:10px;
+  margin-bottom:10px;
+}
+.chapter h2{
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.01em;
+  font-weight:800;
+  max-width:280px;
+  margin-bottom:0;
+}
+/* body paragraph kept in DOM for SEO/a11y but hidden in the minimal sticky layer */
+.chapter p:not(.section-label){
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  white-space:nowrap;
+}
+.chapter.asu .section-label,.chapter.asu h2{color:var(--maroon)}
+.chapter-nav{
+  display:flex;
+  flex-direction:row;
+  gap:14px;
+  list-style:none;
+}
+.chapter-nav li{
+  color:var(--muted);
+  transition:color .25s ease,transform .25s ease;
+}
+.chapter-nav li.active{color:var(--gold);transform:translateY(-2px)}
+.chapter-nav span:first-child{
+  font-size:11px;
+  letter-spacing:.14em;
+  font-weight:900;
+}
+.chapter-nav span:last-child{display:none}
+.canvas-space{min-height:100vh}
+#three-canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100vh;
+  z-index:1;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.5s ease;
+  display:block;
+}
+/* loaded gate so the scene fades in softly on first paint instead of popping */
+#three-canvas.visible.loaded{opacity:1}
+#progress{
+  position:fixed;
+  left:0;
+  bottom:0;
+  z-index:240;
+  width:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--maroon),var(--asu));
+}
+#chapterCount{
+  position:fixed;
+  left:24px;
+  bottom:16px;
+  z-index:241;
+  font-size:11px;
+  letter-spacing:.18em;
+  font-weight:900;
+  color:var(--soft);
+  opacity:0;
+  transition:opacity .4s ease;
+  pointer-events:none;
+}
+#chapterCount.show{opacity:1}
+#chapterCount b{color:var(--gold)}
+#dotfield{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+#dotfield.show{opacity:1}
+
+.bridge{
+  position:relative;
+  z-index:30;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(180deg,#0d0f12,#15181c);
+  color:var(--cream);
+  padding:80px 24px;
+}
+.bridge h2{
+  font-size:clamp(40px,7vw,104px);
+  line-height:.9;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+.bridge span{color:var(--gold)}
+.bridge .section-label{margin-bottom:24px}
+
+/* gold line that draws itself when a section enters view */
+.section-head .entry-line{
+  grid-column:1/-1;
+  height:1px;
+  width:0;
+  background:var(--gold);
+  margin-bottom:8px;
+  transition:width .6s ease;
+}
+.section-head.reveal.visible .entry-line{width:100%}
+
+.band{
+  position:relative;
+  z-index:30;
+  padding:120px 0;
+}
+.band.cream2{background:var(--cream2)}
+.band.dark{background:#0d0f12;color:var(--cream)}
+.section-head{
+  display:grid;
+  grid-template-columns:minmax(260px,420px) minmax(0,1fr);
+  gap:80px;
+  align-items:start;
+  margin-bottom:54px;
+}
+.section-head h2{
+  font-size:clamp(48px,6vw,88px);
+  line-height:.9;
+  letter-spacing:-.01em;
+  font-weight:800;
+}
+.section-head p{
+  color:var(--soft);
+  font-size:17px;
+  line-height:1.7;
+  max-width:600px;
+  padding-top:6px;
+}
+.dark .section-head p{color:#8d867c}
+.sports-grid,.stats-grid,.projects-grid{
+  display:grid;
+  gap:2px;
+}
+.sports-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sports-card,.stat-card,.project-card,.work-item{
+  background:rgba(255,250,240,.45);
+  border:1px solid rgba(23,22,20,.08);
+}
+.dark .sports-card{background:#15181c;border-color:#23272c}
+.sports-card{
+  min-height:340px;
+  padding:44px;
+  position:relative;
+  overflow:hidden;
+  transition:background .2s ease,transform .2s ease;
+}
+.sports-card:hover{background:#1d2127;transform:translateY(-2px)}
+.sports-icon{
+  width:58px;
+  height:58px;
+  color:var(--gold);
+  margin-bottom:40px;
+}
+.f1-icon{color:#e8002d}
+.sports-card h3{font-size:34px;margin-bottom:14px}
+.sports-card p{max-width:360px;color:#928a80;line-height:1.65;font-size:15px}
+.sports-watermark{
+  position:absolute;
+  right:-12px;
+  bottom:-20px;
+  color:rgba(255,255,255,.035);
+  font-size:128px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:0;
+  transition:color .25s ease;
+}
+.sports-card:not(.f1):hover .sports-watermark{color:rgba(201,150,58,.09)}
+.sports-card.f1:hover .sports-watermark{color:rgba(232,0,45,.08)}
+.sports-card.f1:hover{background:#1a1216}
+.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat-card{
+  min-height:210px;
+  padding:30px 26px;
+  background:var(--white);
+  border-left:4px solid var(--maroon);
+  border-top:2px solid transparent;
+  transition:border-top-color .25s ease,transform .2s ease;
+}
+.stat-card:hover{border-top-color:var(--asu);transform:translateY(-2px)}
+.stat-card strong{
+  display:block;
+  color:var(--maroon);
+  font-size:clamp(40px,5vw,72px);
+  line-height:.9;
+  letter-spacing:0;
+  margin-bottom:14px;
+}
+.stat-card span{display:block;color:var(--soft);font-size:14px;line-height:1.5}
+.person-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:2px;
+}
+.person-block{
+  background:var(--cream);
+  padding:36px;
+  min-height:250px;
+  border:1px solid rgba(23,22,20,.08);
+}
+.person-block h3{font-size:26px;line-height:1.05;margin-bottom:16px}
+.person-block p{color:var(--soft);line-height:1.7;font-size:15px}
+.work-list{
+  border-top:1px solid rgba(23,22,20,.12);
+}
+.work-item{
+  display:grid;
+  grid-template-columns:180px minmax(0,1fr) 180px;
+  gap:32px;
+  align-items:start;
+  padding:30px 0;
+  border:0;
+  border-bottom:1px solid rgba(23,22,20,.12);
+  background:transparent;
+  transition:padding-left .2s ease;
+}
+.work-item:hover{padding-left:12px}
+.work-time,.work-stack{
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:11px;
+  font-weight:900;
+}
+.work-time{padding-top:5px}
+.work-stack{padding-top:5px;line-height:1.7}
+.work-main h3{font-size:32px;margin-bottom:10px}
+.work-main p{color:var(--soft);line-height:1.65;font-size:15px}
+.projects-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.project-card{
+  text-align:left;
+  min-height:320px;
+  padding:34px;
+  background:var(--cream2);
+  border:0;
+  cursor:pointer;
+  transition:background .2s ease,color .2s ease,transform .2s ease;
+}
+.project-card:hover{background:var(--charcoal);color:var(--cream);transform:translateY(-2px)}
+.project-tag{
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  font-size:10px;
+  font-weight:900;
+  margin-bottom:24px;
+}
+.project-card h3{font-size:30px;line-height:1.05;margin-bottom:12px}
+.project-card p{color:var(--soft);line-height:1.6;font-size:14px}
+.project-card:hover p{color:#aaa39a}
+.project-arrow{
+  display:block;
+  margin-top:24px;
+  font-size:24px;
+  color:var(--gold);
+  transition:color .2s ease;
+}
+.project-card:hover .project-arrow{color:var(--cream)}
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(15,14,13,.86);
+  backdrop-filter:blur(10px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  width:min(720px,100%);
+  max-height:88vh;
+  overflow:auto;
+  background:var(--white);
+  padding:34px;
+  transform:translateY(18px);
+  transition:transform .25s ease;
+}
+.modal-overlay.open .modal{transform:none}
+.modal-close{
+  float:right;
+  width:38px;
+  height:38px;
+  border:1px solid rgba(23,22,20,.14);
+  background:transparent;
+  cursor:pointer;
+  font-size:24px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  transition:background .15s ease,border-color .15s ease;
+}
+.modal-close:hover{background:var(--charcoal);color:var(--cream);border-color:var(--charcoal)}
+.modal h3{
+  clear:both;
+  font-size:36px;
+  line-height:.98;
+  margin:18px 0;
+}
+.modal p{color:var(--soft);line-height:1.7;margin-bottom:16px}
+.stack{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:24px 0;
+}
+.stack span{
+  background:var(--cream2);
+  border:1px solid rgba(23,22,20,.12);
+  padding:7px 12px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:900;
+}
+.modal-links{display:flex;gap:10px;flex-wrap:wrap}
+footer{
+  position:relative;
+  z-index:30;
+  background:#0d0f12;
+  color:var(--cream);
+  min-height:58vh;
+  padding:76px 32px 30px;
+  overflow:hidden;
+}
+.footer-inner{
+  max-width:1180px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  gap:40px;
+}
+.footer-inner h2{
+  font-size:clamp(36px,min(5.2vw,9vh),82px);
+  line-height:.88;
+  letter-spacing:0;
+  margin-bottom:28px;
+}
+.footer-links{
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  align-items:flex-end;
+}
+.footer-links a{
+  color:#5e5850;
+  text-decoration:none;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:11px;
+  font-weight:900;
+}
+.footer-links a:hover{color:var(--gold)}
+.footer-mark{
+  position:absolute;
+  left:50%;
+  bottom:-.14em;
+  transform:translateX(-50%);
+  width:max-content;
+  color:rgba(255,255,255,.045);
+  font-size:19vw;          /* pure vw → first/last letter bleed the same on any screen */
+  font-weight:950;
+  line-height:1;
+  white-space:nowrap;
+  letter-spacing:0;
+}
+.contact-lines{display:flex;flex-direction:column;gap:6px;margin-top:18px}
+.contact-lines a{color:#8a847b;text-decoration:none;font-size:13px;letter-spacing:.04em;font-weight:700}
+.contact-lines a:hover{color:var(--gold)}
+.footer-bottom{
+  max-width:1180px;
+  margin:110px auto 0;
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  border-top:1px solid #24211e;
+  padding-top:18px;
+  color:#4f4943;
+  font-size:12px;
+}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:980px){
+  body{cursor:auto}
+  #cursor{display:none}
+  .topbar{height:64px;padding:0 18px}
+  .nav-links{display:none}
+  #hero{grid-template-columns:1fr;min-height:auto;padding:110px 22px 74px}
+  .hero-aside{display:grid;grid-template-columns:1fr 1fr}
+  .journey-wrap{display:block;min-height:auto}
+  .story-panel{
+    position:relative;
+    height:auto;
+    width:100%;
+    padding:86px 22px 32px;
+    background:var(--page);
+    pointer-events:auto;
+  }
+  .chapter-stack{min-height:auto;margin-bottom:28px}
+  .chapter{position:relative;opacity:1;transform:none;margin-bottom:38px}
+  .chapter h2{max-width:none;font-size:clamp(26px,7vw,34px)}
+  .chapter p:not(.section-label){
+    position:relative;width:auto;height:auto;overflow:visible;
+    clip:auto;white-space:normal;
+    margin-top:14px;max-width:520px;color:var(--soft);
+    font-size:15px;line-height:1.65;
+    border-left:2px solid var(--gold);padding-left:18px;
+  }
+  .chapter.asu p:not(.section-label){border-left-color:var(--maroon)}
+  .chapter-nav{display:none}
+  #dotfield,#chapterCount{display:none}
+  #three-canvas{display:none}
+  .canvas-space{min-height:0}
+  .section-head,.person-grid{grid-template-columns:1fr;gap:26px}
+  .sports-grid,.stats-grid,.projects-grid{grid-template-columns:1fr 1fr}
+  .work-item{grid-template-columns:1fr;gap:12px}
+}
+@media(max-width:640px){
+  .wrap{padding:0 20px}
+  .nav-action{display:none}
+  .hero-aside,.sports-grid,.stats-grid,.projects-grid{grid-template-columns:1fr}
+  .hero-title{font-size:56px}
+  .band{padding:70px 0}
+  .section-head h2{font-size:42px}
+  .footer-inner,.footer-bottom{display:block}
+  .footer-links{align-items:flex-start;margin-top:34px}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="progress"></div>
+<div id="chapterCount"><b>01</b> / 05</div>
+<canvas id="dotfield"></canvas>
+
+<nav class="topbar" id="topbar">
+  <a class="brand" href="#hero">HYV</a>
+  <ul class="nav-links">
+    <li><a href="#journey">Story</a></li>
+    <li><a href="#sports">Sports</a></li>
+    <li><a href="#asu">ASU</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+  </ul>
+  <a class="nav-action" href="#contact">Contact</a>
+</nav>
+
+<canvas id="three-canvas"></canvas>
+
+<main>
+  <section id="hero">
+    <div class="hero-copy">
+      <div class="hero-kicker">Data Scientist &middot; ML Data Science &middot; ASU</div>
+      <h1 class="hero-title">Harihara<br><span>Veldanda</span></h1>
+      <p class="hero-sub">Data scientist and ML engineer turning messy data and large models into products that ship — from retail analytics at MathCo to generative AI in production.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#journey">Start the story</a>
+        <a class="btn ghost" href="#projects">View projects</a>
+      </div>
+    </div>
+    <div class="scroll-note">scroll</div>
+  </section>
+
+  <section id="journey">
+    <div class="journey-wrap">
+      <div class="story-panel">
+        <div class="chapter-stack" id="chapterStack">
+          <article class="chapter active" data-step="01">
+            <p class="section-label">Chapter 01 &middot; Hyderabad</p>
+            <h2>The lake, the city, the start.</h2>
+            <p>Hussain Sagar. A heart-shaped lake at the center of Hyderabad, a standing Buddha rising from the water. The city that shaped the first instinct to build.</p>
+          </article>
+          <article class="chapter" data-step="02">
+            <p class="section-label">Chapter 02 &middot; SASTRA, Thanjavur</p>
+            <h2>SASTRA shaped everything.</h2>
+            <p>Four years at SASTRA Deemed University. Labs, deadlines, the football field at 6am, and the first time code did something that mattered.</p>
+          </article>
+          <article class="chapter" data-step="03">
+            <p class="section-label">Chapter 03 &middot; Bengaluru</p>
+            <h2>MathCo. Where data became work.</h2>
+            <p>Data Analyst at MathCo on Mahatma Gandhi Road. Walmart+ analytics, NLP-driven churn models, 15+ A/B tests. The place where theory became production.</p>
+          </article>
+          <article class="chapter asu" data-step="04">
+            <p class="section-label">Chapter 04 &middot; Arizona State</p>
+            <h2>ASU: data science at scale.</h2>
+            <p>MS in Data Science &amp; Analytics Engineering. GPA 3.87. Fine-tuned diffusion models, built RAG pipelines, and shipped AI products from Tempe to production.</p>
+          </article>
+          <article class="chapter" data-step="05">
+            <p class="section-label">Chapter 05 &middot; Arrival</p>
+            <h2>The destination.</h2>
+            <p>The journey lands here. MathCo, ASU, AI in production. Scroll down for the proof — work, projects, and the engineer this route built.</p>
+          </article>
+        </div>
+        <ol class="chapter-nav" id="chapterNav">
+          <li class="active"><span>01</span><span>Hyderabad</span></li>
+          <li><span>02</span><span>SASTRA</span></li>
+          <li><span>03</span><span>Bengaluru</span></li>
+          <li><span>04</span><span>ASU</span></li>
+          <li><span>05</span><span>Arrival</span></li>
+        </ol>
+      </div>
+      <div class="canvas-space"></div>
+    </div>
+  </section>
+
+  <section class="bridge" id="bridge">
+    <div class="reveal">
+      <p class="section-label">End of the journey</p>
+      <h2>The work<br>starts <span>here.</span></h2>
+    </div>
+  </section>
+
+  <section class="band dark" id="sports">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="entry-line"></div>
+        <div>
+          <p class="section-label">Off the clock</p>
+          <h2>Beyond the code.</h2>
+        </div>
+        <p>Sports are not filler here. They explain a lot about how I like to work: quick reads, clean execution, strategy, pressure, and constant iteration.</p>
+      </div>
+      <div class="sports-grid">
+        <article class="sports-card reveal">
+          <svg class="sports-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="3"/>
+            <path d="M32 8c9 8 13 16 13 24S41 48 32 56M32 8C23 16 19 24 19 32s4 16 13 24M8 32c8-4 16-4 24 0s16 4 24 0" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <h3>Basketball</h3>
+          <p>Reading the floor, creating space, and making the right pass before the obvious option appears.</p>
+          <span class="sports-watermark">B</span>
+        </article>
+        <article class="sports-card f1 reveal">
+          <svg class="sports-icon f1-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <!-- steering wheel ring -->
+            <circle cx="32" cy="32" r="21" stroke="currentColor" stroke-width="3.5"/>
+            <!-- center hub -->
+            <circle cx="32" cy="32" r="8" stroke="currentColor" stroke-width="2.5"/>
+            <!-- three spokes -->
+            <line x1="32" y1="24" x2="32" y2="11" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="24.1" y1="39.3" x2="15.4" y2="47.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="39.9" y1="39.3" x2="48.6" y2="47.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+          <h3>Formula 1</h3>
+          <p>Telemetry, tradeoffs, speed, reliability, and how tiny improvements compound when the system is tuned well.</p>
+          <span class="sports-watermark">F1</span>
+        </article>
+        <article class="sports-card cricket reveal">
+          <svg class="sports-icon cricket-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M13 52 L13 20 Q13 8 23 8 Q33 8 33 20 L33 43 L23 52Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" fill="currentColor" fill-opacity=".12"/>
+            <line x1="19" y1="40" x2="27" y2="40" stroke="currentColor" stroke-width="1.5" opacity=".5" stroke-linecap="round"/>
+            <line x1="19" y1="44" x2="27" y2="44" stroke="currentColor" stroke-width="1.5" opacity=".5" stroke-linecap="round"/>
+            <line x1="38" y1="25" x2="38" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="45" y1="25" x2="45" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="52" y1="25" x2="52" y2="55" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="36" y1="25" x2="47" y2="25" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="43" y1="25" x2="54" y2="25" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <h3>Cricket</h3>
+          <p>Patience, pattern recognition, and knowing exactly when to accelerate. The same instincts that ship a model under a deadline.</p>
+          <span class="sports-watermark">CK</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="asu">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="entry-line"></div>
+        <div>
+          <p class="section-label" style="color:var(--maroon)">Arizona State University</p>
+          <h2>ASU by the numbers.</h2>
+        </div>
+        <p>MS in Data Science &amp; Analytics Engineering at ASU Tempe. Applied AI, forecasting, and statistical ML — built into production systems and live demos.</p>
+      </div>
+      <div class="stats-grid">
+        <article class="stat-card reveal"><strong>3.87</strong><span>GPA in MS Data Science &amp; Analytics Engineering, Arizona State University.</span></article>
+        <article class="stat-card reveal"><strong>2026</strong><span>Expected graduation May 2026. Full-time MS since August 2024 at ASU Tempe.</span></article>
+        <article class="stat-card reveal"><strong>4</strong><span>Projects shipped — from fine-tuned diffusion models to RAG pipelines in production.</span></article>
+        <article class="stat-card reveal"><strong>AI/ML</strong><span>Coursework: Artificial Intelligence, Time-series Forecasting, Statistical ML, Data Mining.</span></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band cream2" id="person">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="entry-line"></div>
+        <div>
+          <p class="section-label">The person part</p>
+          <h2>How I think.</h2>
+        </div>
+        <p>A portfolio should prove skill, but it should also make someone feel the person behind the code. This section is the human read.</p>
+      </div>
+      <div class="person-grid">
+        <article class="person-block reveal">
+          <h3>Data should tell a story, not just report numbers.</h3>
+          <p>From Walmart+ churn to AI invitation generation — every model I build is aimed at a human decision. I care about the downstream as much as the upstream.</p>
+        </article>
+        <article class="person-block reveal">
+          <h3>I learn fastest by shipping things.</h3>
+          <p>Fine-tuning FLUX, building RAG pipelines, debugging PySpark jobs — the loop is always the same: build it, break it, understand why, make it better. Repeat until it ships.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="experience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="entry-line"></div>
+        <div>
+          <p class="section-label">Experience</p>
+          <h2>Where I have worked.</h2>
+        </div>
+        <p>This layout is built for quick scanning: date, role, impact, and stack. Your exact role names and links can drop in cleanly.</p>
+      </div>
+      <div class="work-list">
+        <article class="work-item reveal">
+          <div class="work-time">Oct 2023 &middot; Jul 2024</div>
+          <div class="work-main">
+            <h3>Data Analyst &mdash; MathCo</h3>
+            <p>Analytics for Walmart+ at MathCo, Bengaluru. Drove 10% customer spending growth and 40% retention lift via predictive analytics and NLP churn diagnosis. Piloted 15+ A/B tests improving conversion by 15%. Complex SQL in BigQuery, dashboards in Power BI and Tableau.</p>
+          </div>
+          <div class="work-stack">Python &middot; SQL &middot; BigQuery &middot; PySpark</div>
+        </article>
+        <article class="work-item reveal">
+          <div class="work-time">Jan 2023 &middot; Jun 2023</div>
+          <div class="work-main">
+            <h3>Intern Analyst &mdash; MathCo</h3>
+            <p>Built predictive models for luxury fashion identifying 90% of key sales drivers, boosting sales by 10%. Constructed a stock estimation simulator with MAPE of 12%. Streamlined pipelines with Azure Data Factory.</p>
+          </div>
+          <div class="work-stack">Python &middot; Azure &middot; PowerBI &middot; ML</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band cream2" id="projects">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="entry-line"></div>
+        <div>
+          <p class="section-label">Projects</p>
+          <h2>Click for the details.</h2>
+        </div>
+        <p>Each project opens into a deeper explanation with stack, architecture notes, GitHub, and demo links. The cards stay clean; the modal carries the details.</p>
+      </div>
+      <div class="projects-grid">
+        <button class="project-card reveal" data-project="p1">
+          <div class="project-tag">Generative AI &middot; Live</div>
+          <h3>LekhaAI</h3>
+          <p>Fine-tuned FLUX diffusion model with LoRA for personalized AI invitation generation. Deployed on Azure ML, live at lekhaai.com.</p>
+          <span class="project-arrow">&nearr;</span>
+        </button>
+        <button class="project-card reveal" data-project="p2">
+          <div class="project-tag">RAG &middot; LLM</div>
+          <h3>RAG HR Assistant</h3>
+          <p>Containerized RAG system indexing 10K+ HR records via FAISS. 83% query accuracy boost. Automated 40% of manual HR support workload.</p>
+          <span class="project-arrow">&nearr;</span>
+        </button>
+        <button class="project-card reveal" data-project="p3">
+          <div class="project-tag">Knowledge Graph</div>
+          <h3>Medical Chatbot</h3>
+          <p>Neo4j knowledge graph linking diseases, symptoms, and treatments with NLP intent detection improving accuracy by 25%.</p>
+          <span class="project-arrow">&nearr;</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <h2>Let's build<br>something together.</h2>
+      <a class="btn" style="background:var(--gold);color:var(--ink);border-color:var(--gold)" href="mailto:hveldan1@asu.edu">Get in touch</a>
+      <div class="contact-lines">
+        <a href="mailto:hveldan1@asu.edu">hveldan1@asu.edu</a>
+        <a href="tel:+13615719800">+1 361&middot;571&middot;9800</a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/Yashi248" target="_blank" rel="noreferrer">GitHub &nearr;</a>
+      <a href="https://www.linkedin.com/in/harihara-veldanda-974299221/" target="_blank" rel="noreferrer">LinkedIn &nearr;</a>
+      <a href="./Harihara_Veldanda_Resume.pdf" target="_blank" rel="noreferrer">Resume &nearr;</a>
+      <a href="#hero" id="backToTop">Back to top &uarr;</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Harihara Yashwanth Veldanda</p>
+    <p>Hyderabad &rarr; SASTRA &rarr; Bengaluru &rarr; ASU</p>
+  </div>
+  <div class="footer-mark">YASHWANTH</div>
+</footer>
+
+<div class="modal-overlay" id="projectModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" type="button" id="modalClose" aria-label="Close">&times;</button>
+    <div class="project-tag" id="modalTag">Project</div>
+    <h3 id="modalTitle">Project title</h3>
+    <p id="modalDesc"></p>
+    <p id="modalDetail"></p>
+    <div class="stack" id="modalStack"></div>
+    <div class="modal-links">
+      <a class="btn primary" id="modalGithub" href="#" target="_blank" rel="noreferrer">GitHub</a>
+      <a class="btn ghost" id="modalDemo" href="#" target="_blank" rel="noreferrer">Demo</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smoothstep=t=>t*t*(3-2*t);
+
+const canvas=document.getElementById("three-canvas");
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=0.98;
+
+const scene=new THREE.Scene();
+// soft vertical gradient sky so light buildings have something to separate against
+(function(){
+  const c=document.createElement("canvas");c.width=2;c.height=256;
+  const cx=c.getContext("2d");
+  const g=cx.createLinearGradient(0,0,0,256);
+  g.addColorStop(0,"#a9bccb");g.addColorStop(.55,"#c6d3dd");g.addColorStop(1,"#dde4ea");
+  cx.fillStyle=g;cx.fillRect(0,0,2,256);
+  const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;
+  scene.background=t;
+})();
+scene.fog=new THREE.FogExp2(0xd0dae1,.006);
+const camera=new THREE.PerspectiveCamera(18,1,1,400);
+
+let gridMat=null; // assigned once the dot grid is built; resize() updates it safely
+let composer=null,tiltPass=null,ssaoPass=null; // post-processing (SSAO + tilt-shift)
+
+function resize(){
+  const w=canvas.clientWidth||window.innerWidth;
+  const h=canvas.clientHeight||window.innerHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+  if(gridMat){
+    gridMat.uniforms.uScale.value=h*0.9;
+    gridMat.uniforms.uPix.value=renderer.getPixelRatio();
+  }
+  if(composer){
+    const dpr=renderer.getPixelRatio();
+    composer.setSize(w*dpr,h*dpr);
+    if(ssaoPass) ssaoPass.setSize(w*dpr,h*dpr);
+    if(tiltPass) tiltPass.uniforms.uResolution.value.set(w*dpr,h*dpr);
+  }
+}
+window.addEventListener("resize",resize);
+resize();
+
+scene.add(new THREE.HemisphereLight(0xfff6e8,0xb9c2c8,.52));
+const sun=new THREE.DirectionalLight(0xffffff,1.45);
+sun.position.set(32,42,28);
+sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.near=1;
+sun.shadow.camera.far=500;
+sun.shadow.camera.left=-90;
+sun.shadow.camera.right=90;
+sun.shadow.camera.top=90;
+sun.shadow.camera.bottom=-90;
+sun.shadow.bias=-.001;
+sun.shadow.radius=4;
+scene.add(sun);
+const cool=new THREE.DirectionalLight(0xcfe4ff,.14);
+cool.position.set(-30,24,-20);
+scene.add(cool);
+
+// soft procedural sky/ground environment so PBR materials catch real reflections
+const pmrem=new THREE.PMREMGenerator(renderer);
+(function(){
+  const c=document.createElement("canvas");c.width=8;c.height=64;
+  const cx=c.getContext("2d");
+  const grd=cx.createLinearGradient(0,0,0,64);
+  grd.addColorStop(0,"#dfe7ed");grd.addColorStop(.55,"#c9d3da");grd.addColorStop(1,"#b3bab4");
+  cx.fillStyle=grd;cx.fillRect(0,0,8,64);
+  const tex=new THREE.CanvasTexture(c);
+  tex.mapping=THREE.EquirectangularReflectionMapping;
+  scene.environment=pmrem.fromEquirectangular(tex).texture;
+  tex.dispose();pmrem.dispose();
+})();
+
+// mild, muted palette on PBR materials so they catch the environment reflections
+const mat={
+  ground:new THREE.MeshStandardMaterial({color:0xbdb9ac,roughness:.95,metalness:0}),
+  cream:new THREE.MeshStandardMaterial({color:0xe9e3d6,roughness:.8,metalness:.02}),
+  cream2:new THREE.MeshStandardMaterial({color:0xdcd4c4,roughness:.82,metalness:.02}),
+  cream3:new THREE.MeshStandardMaterial({color:0xcabfa8,roughness:.85,metalness:.02}),
+  gold:new THREE.MeshStandardMaterial({color:0xc9963a,roughness:.34,metalness:.55}),
+  maroon:new THREE.MeshStandardMaterial({color:0x9c6a78,roughness:.7,metalness:.05}),
+  glass:new THREE.MeshStandardMaterial({color:0xa9c6d2,roughness:.16,metalness:.25}),
+  dark:new THREE.MeshStandardMaterial({color:0x47505a,roughness:.55,metalness:.12}),
+  rubber:new THREE.MeshStandardMaterial({color:0x33383f,roughness:.8,metalness:0}),
+  orange:new THREE.MeshStandardMaterial({color:0xd99b63,roughness:.7,metalness:.05}),
+  red:new THREE.MeshStandardMaterial({color:0xbf7d72,roughness:.7,metalness:.05}),
+  green:new THREE.MeshStandardMaterial({color:0x9fb39a,roughness:.85,metalness:0}),
+  bark:new THREE.MeshStandardMaterial({color:0xb3a892,roughness:.9,metalness:0}),
+  sun:new THREE.MeshStandardMaterial({color:0xc9963a,emissive:0xc9963a,emissiveIntensity:.55,roughness:.3,metalness:.4})
+};
+
+function mesh(geo,m,shadow=true){
+  const x=new THREE.Mesh(geo,m);
+  if(shadow){x.castShadow=true;x.receiveShadow=true}
+  return x;
+}
+function box(w,h,d,m){return mesh(new THREE.BoxGeometry(w,h,d),m)}
+function cyl(rt,rb,h,s,m){return mesh(new THREE.CylinderGeometry(rt,rb,h,s),m)}
+function cone(r,h,s,m){return mesh(new THREE.ConeGeometry(r,h,s),m)}
+function sphere(r,w,h,m){return mesh(new THREE.SphereGeometry(r,w,h),m)}
+function torus(r,t,rs,ts,m){return mesh(new THREE.TorusGeometry(r,t,rs,ts),m)}
+function pos(o,x,y,z){o.position.set(x,y,z);return o}
+function scl(o,x,y,z){o.scale.set(x,y,z);return o}
+// thin flat ring band (for minaret bands, cornices)
+function ring(r,t,m){return mesh(new THREE.TorusGeometry(r,t,8,20),m)}
+// half-arch outline: a torus drawn over only the top 180deg
+function arch(r,t,m){return mesh(new THREE.TorusGeometry(r,t,6,18,Math.PI),m)}
+
+const ground=mesh(new THREE.PlaneGeometry(360,460),mat.ground,false);
+ground.rotation.x=-Math.PI/2;
+ground.position.set(0,-.1,-80);
+ground.receiveShadow=true;
+scene.add(ground);
+
+function addTiles(g,w,d,countX,countZ,zoff){
+  for(let i=0;i<countX;i++){
+    for(let j=0;j<countZ;j++){
+      const t=box(w,.16,d,mat.cream2);
+      t.position.set((i-(countX-1)/2)*(w+1),.03,zoff+(j-(countZ-1)/2)*(d+1));
+      t.receiveShadow=true;
+      g.add(t);
+    }
+  }
+}
+function addPalm(g,x,z,h){
+  const trunk=cyl(.17,.27,h,7,mat.bark);
+  trunk.rotation.z=x<0?-.08:.08;
+  g.add(pos(trunk,x,h/2,z));
+  const crownY=h+.5;
+  // small core so the center isn't empty
+  const core=sphere(.4,7,5,mat.green);
+  g.add(pos(core,x,crownY,z));
+  // 8 leaf blades radiating outward and drooping down
+  const blades=8;
+  for(let i=0;i<blades;i++){
+    const a=(i/blades)*Math.PI*2;
+    const blade=box(2.1,.08,.5,mat.green);
+    blade.position.set(x+Math.cos(a)*1.1,crownY-.12,z+Math.sin(a)*1.1);
+    blade.rotation.y=-a;
+    blade.rotation.z=.34; // droop
+    g.add(blade);
+  }
+}
+
+function hussainSagar(z){
+  const g=new THREE.Group();
+  // the lake itself — a cool water sheet
+  g.add(pos(box(30,.3,22,mat.glass),0,.05,0));
+  // hazy city skyline along the far bank
+  [[-13,5,-9,2.2],[-9,7,-9.5,2.6],[-5,4,-10,2.0],[0,8.5,-10,3.0],[5,6,-9.5,2.4],[10,9,-9,2.8],[13,5.5,-9,2.2]].forEach(([x,h,pz,w])=>{
+    g.add(pos(box(w,h,w*.8,mat.cream2),x,h/2,pz));
+    g.add(pos(box(w*.5,.2,.06,mat.glass),x,h*.7,pz+w*.4));
+  });
+  // Necklace Road: a curved promenade arc hugging the west bank
+  const road=torus(15,.5,6,40,mat.cream3);
+  road.rotation.x=Math.PI/2;
+  road.scale.set(.6,1,1);
+  g.add(pos(road,-14,.12,-2));
+  // central island — stepped stone plinth rising from the water
+  g.add(pos(box(6.4,.7,6.4,mat.cream3),0,.55,0));
+  g.add(pos(box(5.2,.7,5.2,mat.cream2),0,1.15,0));
+  g.add(pos(box(3.6,.6,3.6,mat.cream),0,1.7,0));
+  // standing Buddha statue — the lightest, focal mass
+  const buddha=new THREE.Group();
+  buddha.add(pos(cyl(.55,1.05,4.2,18,mat.cream),0,2.1,0));        // robed body, flared base
+  const shoulders=sphere(.95,14,12,mat.cream);scl(shoulders,1.05,.6,.8);
+  buddha.add(pos(shoulders,0,4.25,0));
+  buddha.add(pos(cyl(.34,.4,.5,12,mat.cream),0,4.7,0));           // neck
+  buddha.add(pos(sphere(.52,16,14,mat.cream),0,5.4,0));           // head
+  buddha.add(pos(sphere(.2,10,8,mat.cream),0,5.95,0));            // ushnisha topknot
+  buddha.position.set(0,2.0,0);
+  g.add(buddha);
+  g.position.z=z;
+  scene.add(g);
+  return g;
+}
+
+function collegeWorld(z){
+  const g=new THREE.Group();
+  g.add(pos(box(34,.22,24,mat.ground),0,0,0));
+  // main block with floor cornices + a window band
+  g.add(pos(box(19,5.2,7,mat.cream),0,2.6,0));
+  [1.9,3.5].forEach(by=>g.add(pos(box(19.3,.22,7.3,mat.cream3),0,by,0)));
+  g.add(pos(box(19.05,1.2,.1,mat.glass),0,2.9,3.5)); // glazing strip
+  // wings with recessed window rows
+  [-12.5,12.5].forEach(wx=>{
+    g.add(pos(box(6,4.2,6.5,mat.cream),wx,2.1,.25));
+    for(let r=0;r<2;r++) g.add(pos(box(6.05,.7,.1,mat.glass),wx,1.5+r*1.5,3.5));
+  });
+  // clock tower: wide base, inset upper stage, dome, spire
+  g.add(pos(box(3.6,7,3.6,mat.cream),0,3.5,0));
+  g.add(pos(box(2.7,4.8,2.7,mat.cream),0,9.4,0));
+  g.add(pos(box(1.6,1.6,.12,mat.dark),0,9.6,1.36)); // clock face
+  const cap=sphere(1.7,14,8,mat.cream);
+  scl(cap,1,.6,1);
+  g.add(pos(cap,0,12.1,0));
+  g.add(pos(cone(.42,2.4,8,mat.gold),0,13.9,0));
+  // flagpole + flag anchored to the pole
+  g.add(pos(cyl(.08,.08,7,6,mat.dark),-6.8,3.5,-4.5));
+  g.add(pos(box(2.2,1,.08,mat.maroon),-5.62,6.5,-4.5));
+  addTiles(g,1.4,1.4,8,5,6);
+  // lighter stone entrance path between the wings
+  g.add(pos(box(4.2,.1,9,mat.cream3),0,.07,7.5));
+  [[-10,-7],[-6,-7],[6,-7],[10,-7],[-13,6],[13,6]].forEach(([x,pz])=>{
+    g.add(pos(cyl(.18,.24,2.8,6,mat.bark),x,1.4,pz));
+    const crown=sphere(1.25,8,6,mat.green);
+    scl(crown,1,.85,1);
+    g.add(pos(crown,x,3.15,pz));
+  });
+  // entrance gateway arch (the SASTRA gate)
+  g.add(pos(box(.7,4.2,.7,mat.cream),-3.6,2.1,9.5));
+  g.add(pos(box(.7,4.2,.7,mat.cream),3.6,2.1,9.5));
+  g.add(pos(box(8.5,1.1,1,mat.cream2),0,4.6,9.5));
+  g.add(pos(box(7.4,.5,.3,mat.gold),0,4.6,10.05));
+  g.position.z=z;
+  scene.add(g);
+  return g;
+}
+
+function bengaluru(z){
+  const g=new THREE.Group();
+  g.add(pos(box(36,.22,26,mat.ground),0,0,0));
+  // Raheja Towers — tall banded office tower, the centerpiece
+  g.add(pos(box(6,1,6,mat.cream3),0,.5,-2));               // plinth
+  g.add(pos(box(5,19,5,mat.cream),0,10,-2));               // shaft
+  for(let y=2;y<18;y+=1.2) g.add(pos(box(5.08,.55,5.08,mat.glass),0,y,-2)); // window bands
+  [-1.6,0,1.6].forEach(mx=>g.add(pos(box(.16,17,.16,mat.cream3),mx,10,.55))); // mullions
+  g.add(pos(box(3.2,1.6,3.2,mat.cream),0,20.3,-2));        // setback crown
+  g.add(pos(cyl(.08,.08,2.4,6,mat.dark),0,22.3,-2));       // roof mast
+  // surrounding tech-city skyline
+  [[-11,7,3,2.6],[-8,10,-6,2.4],[-13,5,-3,3.0],[9,8,-5,2.6],[12,11,2,2.8],[8,6,5,3.0],[-6,9,8,2.2],[6,7,9,2.4]].forEach(([x,h,pz,w],i)=>{
+    const m=[mat.cream,mat.cream2,mat.cream3][i%3];
+    g.add(pos(box(w,h,w,m),x,h/2,pz));
+    for(let y=1.5;y<h-.5;y+=1.4) g.add(pos(box(w+.04,.32,w+.04,mat.glass),x,y,pz));
+    g.add(pos(box(w+.16,.26,w+.16,mat.cream3),x,h+.1,pz)); // parapet
+  });
+  // Namma Metro elevated viaduct running along MG Road
+  g.add(pos(box(34,.6,2.4,mat.cream2),0,4.2,9));
+  for(let x=-15;x<=15;x+=5) g.add(pos(cyl(.5,.6,4,8,mat.cream3),x,2,9));
+  // boulevard trees along the road
+  [-12,-4,4,12].forEach(x=>{
+    g.add(pos(cyl(.18,.24,2.4,6,mat.bark),x,1.2,11.5));
+    const crown=sphere(1.1,8,6,mat.green);scl(crown,1,.85,1);
+    g.add(pos(crown,x,3,11.5));
+  });
+  g.position.z=z;
+  scene.add(g);
+  return g;
+}
+
+function asuWorld(z){
+  const g=new THREE.Group();
+  g.add(pos(box(38,.22,26,mat.ground),0,0,0));
+  addTiles(g,2.2,2.2,11,7,2);
+  g.add(pos(box(20,5.8,7.5,mat.cream),0,2.9,0));
+  g.add(pos(box(20.4,.42,.22,mat.maroon),0,5.68,-3.88));
+  g.add(pos(box(6,5,7,mat.cream),-13,2.5,.2));
+  g.add(pos(box(6,5,7,mat.cream),13,2.5,.2));
+  // bell tower with a flat Old Main-style dome (scaled sphere, not a cone)
+  g.add(pos(box(2.5,13.2,2.5,mat.cream),0,6.6,0));
+  const tdome=sphere(1.9,14,8,mat.maroon);
+  scl(tdome,1,.5,1);
+  g.add(pos(tdome,0,13.5,0));
+  g.add(pos(cone(.16,1,8,mat.gold),0,14.6,0));
+  // ASU sun: central sphere + radiating spokes
+  const sunGrp=new THREE.Group();
+  sunGrp.add(sphere(2,18,16,mat.sun));
+  for(let i=0;i<16;i++){
+    const a=(i/16)*Math.PI*2;
+    const spoke=cyl(.05,.05,1.8,6,mat.sun);
+    spoke.position.set(Math.cos(a)*2.9,Math.sin(a)*2.9,0);
+    spoke.rotation.z=a-Math.PI/2;
+    sunGrp.add(spoke);
+  }
+  g.add(pos(sunGrp,13,16,-9));
+  [[-14,-6,8.5],[-10,-6,10],[10,-6,9],[14,-6,7.8],[-16,6,6.7],[16,6,6.7]].forEach(([x,pz,h])=>addPalm(g,x,pz,h));
+  // sign posts: thin pillar + a small panel on top
+  [[-8,8],[0,9],[8,8]].forEach(([x,pz])=>{
+    g.add(pos(cyl(.16,.16,2.6,8,mat.dark),x,1.3,pz));
+    g.add(pos(box(2.4,1.1,.18,mat.maroon),x,3,pz));
+    g.add(pos(box(2.1,.12,.22,mat.gold),x,2.6,pz));
+  });
+  g.position.z=z;
+  scene.add(g);
+  return g;
+}
+
+function podium(z){
+  const g=new THREE.Group();
+  g.add(pos(box(30,.22,24,mat.ground),0,0,0));
+  addTiles(g,2.2,2.2,9,7,-2);
+  // finish gate (the single gold accent moment) the walker passes through
+  g.add(pos(box(.6,7,.6,mat.gold),-5,3.5,3));
+  g.add(pos(box(.6,7,.6,mat.gold),5,3.5,3));
+  g.add(pos(box(11,.6,.6,mat.gold),0,7,3));
+  // three-step podium
+  g.add(pos(box(3.8,2,3.8,mat.cream2),-4,1,-3));    // 2nd place
+  g.add(pos(box(3.8,3.2,3.8,mat.cream),0,1.6,-3));   // 1st place (center, tallest)
+  g.add(pos(box(3.8,1.4,3.8,mat.cream3),4,.7,-3));   // 3rd place
+  g.add(pos(box(3.9,.5,3.9,mat.gold),0,3.45,-3));    // gold cap on the winner's block
+  // backdrop wall with a gold rule
+  g.add(pos(box(16,8,.5,mat.cream2),0,4,-7));
+  g.add(pos(box(14,.3,.6,mat.gold),0,5.5,-6.7));
+  // floating accent cubes (confetti)
+  [[-3,6,-1],[2,7,-2],[4,6.5,0],[-1,7.5,1]].forEach(([x,y,pz])=>g.add(pos(box(.3,.3,.3,mat.gold),x,y,pz)));
+  g.position.z=z;
+  scene.add(g);
+  return g;
+}
+
+const Z=[0,-38,-76,-114,-152];
+hussainSagar(Z[0]);
+collegeWorld(Z[1]);
+bengaluru(Z[2]);
+asuWorld(Z[3]);
+podium(Z[4]);
+
+const curve=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(0,1.2,3),
+  new THREE.Vector3(-7,1.2,-16),
+  new THREE.Vector3(3,1.4,Z[1]+7),
+  new THREE.Vector3(-5,1.1,Z[1]-12),
+  new THREE.Vector3(0,1.2,Z[2]+3),
+  new THREE.Vector3(8,1.25,Z[2]-11),
+  new THREE.Vector3(0,1.3,Z[3]+4),
+  new THREE.Vector3(-6,1.2,Z[3]-12),
+  new THREE.Vector3(0,1.25,Z[4]+2)
+]);
+const trailGeo=new THREE.TubeGeometry(curve,900,0.07,6,false);
+const trailCount=trailGeo.index.count;
+trailGeo.setDrawRange(0,0);
+const route=new THREE.Mesh(trailGeo,new THREE.MeshStandardMaterial({
+  color:0xc9963a,emissive:0xc9963a,emissiveIntensity:.6,roughness:.3,metalness:.1
+}));
+scene.add(route);
+
+// low-poly walker that rides the path (the single gold accent figure)
+const goldFig=new THREE.MeshStandardMaterial({color:0xc9963a,emissive:0xc9963a,emissiveIntensity:.55,roughness:.3,metalness:.05});
+function limb(w,h,d){
+  const grp=new THREE.Group();
+  const lm=mesh(new THREE.BoxGeometry(w,h,d),goldFig);
+  lm.position.y=-h/2; // hang below the pivot so it swings from the top
+  grp.add(lm);
+  return grp;
+}
+const walker=new THREE.Group();
+const wTorso=mesh(new THREE.BoxGeometry(.34,.6,.24),goldFig); wTorso.position.y=1.0; walker.add(wTorso);
+const wHead=mesh(new THREE.SphereGeometry(.17,10,8),goldFig); wHead.position.y=1.46; walker.add(wHead);
+const legL=limb(.14,.62,.18); legL.position.set(-.1,.68,0); walker.add(legL);
+const legR=limb(.14,.62,.18); legR.position.set(.1,.68,0); walker.add(legR);
+const armL=limb(.09,.5,.1); armL.position.set(-.25,1.28,0); walker.add(armL);
+const armR=limb(.09,.5,.1); armR.position.set(.25,1.28,0); walker.add(armR);
+scene.add(walker);
+
+// ---- world-locked ground dot grid (disabled for now — flip GRID_ENABLED to true) ----
+const GRID_ENABLED=false;
+const gridDots=(function(){
+  const spacing=2.2,halfX=42,zNear=20,zFar=-170;
+  const positions=[];
+  for(let x=-halfX;x<=halfX;x+=spacing){
+    for(let zz=zFar;zz<=zNear;zz+=spacing){
+      positions.push(x,.06,zz);
+    }
+  }
+  const posArr=new Float32Array(positions);
+  const count=posArr.length/3;
+  const bright=new Float32Array(count);
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute("position",new THREE.BufferAttribute(posArr,3));
+  geo.setAttribute("aBright",new THREE.BufferAttribute(bright,1));
+  const m=new THREE.ShaderMaterial({
+    transparent:true,depthWrite:false,
+    uniforms:{
+      uColor:{value:new THREE.Color(0x3a424b)},
+      uScale:{value:(canvas.clientHeight||window.innerHeight)*0.9},
+      uPix:{value:renderer.getPixelRatio()}
+    },
+    vertexShader:`
+      attribute float aBright;
+      uniform float uScale; uniform float uPix;
+      varying float vA;
+      void main(){
+        vec4 mv=modelViewMatrix*vec4(position,1.0);
+        float fade=1.0-smoothstep(45.0,100.0,-mv.z);
+        float b=aBright;
+        vA=(0.03+b*0.6)*fade;
+        float size=(0.9+b*2.4)*uPix;
+        gl_PointSize=size*(uScale/-mv.z);
+        gl_Position=projectionMatrix*mv;
+      }`,
+    fragmentShader:`
+      uniform vec3 uColor; varying float vA;
+      void main(){
+        vec2 c=gl_PointCoord-vec2(0.5);
+        float dd=dot(c,c);
+        if(dd>0.25) discard;
+        float edge=smoothstep(0.25,0.10,dd);
+        gl_FragColor=vec4(uColor,vA*edge);
+      }`
+  });
+  const pts=new THREE.Points(geo,m);
+  pts.renderOrder=-1;
+  if(GRID_ENABLED) scene.add(pts);
+  gridMat=m;
+  return {pts,m,geo,pos:posArr,bright,count};
+})();
+const gridRay=new THREE.Raycaster();
+const gridPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-0.06);
+const gridNDC=new THREE.Vector2(-2,-2);
+const gridHit=new THREE.Vector3();
+let gridActive=false;
+const GRID_RADIUS=7,GRID_DECAY=0.90;
+window.addEventListener("pointermove",e=>{
+  gridNDC.x=(e.clientX/window.innerWidth)*2-1;
+  gridNDC.y=-(e.clientY/window.innerHeight)*2+1;
+  gridActive=true;
+});
+window.addEventListener("pointerleave",()=>{gridActive=false;});
+function updateGrid(){
+  if(!GRID_ENABLED) return;
+  gridRay.setFromCamera(gridNDC,camera);
+  const hit=gridActive&&gridRay.ray.intersectPlane(gridPlane,gridHit);
+  const gp=gridDots.pos,gb=gridDots.bright,gc=gridDots.count;
+  const cx=gridHit.x,cz=gridHit.z,r2=GRID_RADIUS*GRID_RADIUS;
+  for(let i=0;i<gc;i++){
+    if(hit){
+      const dx=gp[i*3]-cx,dz=gp[i*3+2]-cz,d2=dx*dx+dz*dz;
+      if(d2<r2){
+        const v=1-Math.sqrt(d2)/GRID_RADIUS;
+        if(v>gb[i]) gb[i]=v;
+      }
+    }
+    gb[i]*=GRID_DECAY;
+  }
+  gridDots.geo.attributes.aBright.needsUpdate=true;
+}
+
+const targets=Z.map(z=>new THREE.Vector3(0,4.2,z));
+const camOffset=new THREE.Vector3(36,40,36);
+let raw=0,smooth=0,inStory=false;
+let target=new THREE.Vector3().copy(targets[0]);
+let look=new THREE.Vector3().copy(targets[0]);
+
+const journey=document.getElementById("journey");
+const hero=document.getElementById("hero");
+const chapters=[...document.querySelectorAll(".chapter")];
+const nav=[...document.querySelectorAll(".chapter-nav li")];
+const progress=document.getElementById("progress");
+const chapterCount=document.getElementById("chapterCount");
+const dotfield=document.getElementById("dotfield");
+
+function updateScroll(){
+  const rect=journey.getBoundingClientRect();
+  const heroRect=hero.getBoundingClientRect();
+  const max=journey.offsetHeight-window.innerHeight;
+  raw=max>0?clamp(-rect.top/max,0,1):0;
+  inStory=rect.top<=0&&rect.bottom>=window.innerHeight;
+  const inHero=heroRect.bottom>0&&heroRect.top<window.innerHeight;
+  canvas.classList.toggle("visible",inHero||inStory);
+  progress.style.width=(raw*100)+"%";
+  const t=raw*(targets.length-1);
+  const idx=clamp(Math.floor(t),0,targets.length-2);
+  const frac=smoothstep(t-idx);
+  target.lerpVectors(targets[idx],targets[idx+1],frac);
+  const active=raw>=.995?targets.length-1:clamp(Math.round(raw*(targets.length-1)),0,targets.length-1);
+  chapters.forEach((c,i)=>c.classList.toggle("active",i===active));
+  nav.forEach((n,i)=>n.classList.toggle("active",i===active));
+  chapterCount.classList.toggle("show",inStory);
+  chapterCount.firstChild.textContent=String(active+1).padStart(2,"0");
+  dotfield.classList.toggle("show",rect.bottom<window.innerHeight*.5);
+}
+window.addEventListener("scroll",updateScroll,{passive:true});
+updateScroll();
+
+// ---- post-processing: SSAO (ambient occlusion) for form definition + tilt-shift DOF ----
+try{
+  if(THREE.EffectComposer&&THREE.ShaderPass){
+    composer=new THREE.EffectComposer(renderer);
+    let firstAdded=false;
+    try{
+      if(THREE.SSAOPass){
+        ssaoPass=new THREE.SSAOPass(scene,camera,1,1);
+        ssaoPass.kernelRadius=8;    // tighter AO = contact shadows only, not whole-scene darkening
+        ssaoPass.minDistance=0.001;
+        ssaoPass.maxDistance=0.04;
+        composer.addPass(ssaoPass);
+        firstAdded=true;
+      }
+    }catch(ssaoErr){ ssaoPass=null; firstAdded=false; }
+    if(!firstAdded && THREE.RenderPass) composer.addPass(new THREE.RenderPass(scene,camera));
+    tiltPass=new THREE.ShaderPass({
+      uniforms:{
+        tDiffuse:{value:null},
+        uResolution:{value:new THREE.Vector2(1,1)},
+        uFocus:{value:0.5},    // vertical focus band centre (0=top,1=bottom)
+        uRange:{value:0.26},   // half-height of the sharp band (wider = less blur)
+        uStrength:{value:3.0}  // max blur in pixels at the edges
+      },
+      vertexShader:"varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}",
+      fragmentShader:[
+        "uniform sampler2D tDiffuse; uniform vec2 uResolution;",
+        "uniform float uFocus; uniform float uRange; uniform float uStrength;",
+        "varying vec2 vUv;",
+        "void main(){",
+        "  float d=abs(vUv.y-uFocus);",
+        "  float blur=clamp((d-uRange)/0.42,0.0,1.0); blur*=blur;",
+        "  vec2 px=uStrength*blur/uResolution;",
+        "  vec4 col=texture2D(tDiffuse,vUv); float total=1.0;",
+        "  for(int i=1;i<=12;i++){",
+        "    float a=float(i)*2.39996323; float r=sqrt(float(i)/12.0);",
+        "    vec2 off=vec2(cos(a),sin(a))*r*px;",
+        "    col+=texture2D(tDiffuse,vUv+off); total+=1.0;",
+        "  }",
+        "  gl_FragColor=col/total;",
+        "}"
+      ].join("\n")
+    });
+    composer.addPass(tiltPass);
+    const cw=canvas.clientWidth||window.innerWidth,ch=canvas.clientHeight||window.innerHeight,cdpr=renderer.getPixelRatio();
+    composer.setSize(cw*cdpr,ch*cdpr);
+    if(ssaoPass) ssaoPass.setSize(cw*cdpr,ch*cdpr);
+    tiltPass.uniforms.uResolution.value.set(cw*cdpr,ch*cdpr);
+  }
+}catch(fxErr){ composer=null; }
+
+function animate(time){
+  requestAnimationFrame(animate);
+  smooth+=(raw-smooth)*.055;
+  look.lerp(target,.06);
+  const float=Math.sin(time*.0008)*.4;
+  camera.position.copy(look).add(camOffset);
+  camera.position.x+=float;
+  camera.lookAt(look.x,look.y+2.4,look.z);
+  trailGeo.setDrawRange(0,Math.floor(clamp(smooth,0,1)*trailCount));
+  const sm=clamp(smooth,0,1);
+  const p=curve.getPoint(sm);
+  const tan=curve.getTangent(sm);
+  const bob=Math.abs(Math.sin(time*.013))*.07;
+  walker.position.set(p.x,.04+bob,p.z);
+  walker.rotation.y=Math.atan2(tan.x,tan.z);
+  const swing=Math.sin(time*.013)*.7;
+  legL.rotation.x=swing; legR.rotation.x=-swing;
+  armL.rotation.x=-swing; armR.rotation.x=swing;
+  camera.updateMatrixWorld();
+  updateGrid();
+  if(composer) composer.render(); else renderer.render(scene,camera);
+}
+animate(0);
+
+setTimeout(()=>canvas.classList.add("loaded"),600);
+
+if(window.Lenis){
+  const lenis=new Lenis({duration:1.4,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t))});
+  lenis.on("scroll",()=>{updateScroll();reveal();});
+  function raf(time){lenis.raf(time);requestAnimationFrame(raf);}
+  requestAnimationFrame(raf);
+}
+
+const cursor=document.getElementById("cursor");
+document.addEventListener("mousemove",e=>{
+  cursor.style.left=e.clientX+"px";
+  cursor.style.top=e.clientY+"px";
+});
+document.querySelectorAll("a,button,.sports-card,.work-item").forEach(el=>{
+  el.addEventListener("mouseenter",()=>cursor.classList.add("big"));
+  el.addEventListener("mouseleave",()=>cursor.classList.remove("big"));
+});
+
+const topbar=document.getElementById("topbar");
+const reveals=[...document.querySelectorAll(".reveal")];
+const navLinks=[...document.querySelectorAll(".nav-links a[href^='#']")];
+const navSections=navLinks.map(a=>document.getElementById(a.getAttribute("href").slice(1))).filter(Boolean);
+function reveal(){
+  topbar.classList.toggle("scrolled",window.scrollY>40);
+  reveals.forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight*.88) el.classList.add("visible");
+  });
+  let active=0;
+  navSections.forEach((s,i)=>{if(s.getBoundingClientRect().top<=80)active=i});
+  navLinks.forEach((a,i)=>a.classList.toggle("active",i===active));
+}
+window.addEventListener("scroll",reveal,{passive:true});
+reveal();
+
+const projects={
+  p1:{
+    tag:"Generative AI · Live",
+    title:"LekhaAI",
+    desc:"Fine-tuned a FLUX diffusion model with LoRA for personalized AI invitation generation, shipped to production.",
+    detail:"Fine-tuned FLUX on ~1,500 image–prompt pairs to improve layout quality and text rendering — about 25% higher visual fidelity and ~30% fewer text artifacts versus the base model. Containerized GPU inference on Azure ML (A100), GPT-4 prompt structuring, and a React + TypeScript frontend with an Azure Functions backend, deployed with CI/CD.",
+    stack:["Python","PyTorch","Diffusers","Azure ML","Docker","React","TypeScript"],
+    github:"https://github.com/Yashi248",
+    demo:"https://www.lekhaai.com"
+  },
+  p2:{
+    tag:"RAG · LLM",
+    title:"RAG HR Assistant",
+    desc:"Containerized RAG assistant for Workday HR workflows with low-latency semantic retrieval.",
+    detail:"Indexed 10K+ HR records via RocksDB and FAISS for secure, low-latency retrieval. Boosted query accuracy by 83% with context-grounded semantic search and automated common HR queries, cutting manual support workload by an estimated 40%.",
+    stack:["Python","SQL","RocksDB","FAISS","Docker","FastAPI"],
+    github:"https://github.com/Yashi248",
+    demo:"#"
+  },
+  p3:{
+    tag:"Knowledge Graph",
+    title:"Medical Chatbot",
+    desc:"A Neo4j knowledge-graph chatbot linking diseases, symptoms, and treatments.",
+    detail:"Designed a Neo4j knowledge graph linking diseases, symptoms, and treatments for intelligent query handling. Integrated NLP entity extraction and intent detection, improving query accuracy by 25%.",
+    stack:["Python","Neo4j","Streamlit","Docker","NLTK","scikit-learn"],
+    github:"https://github.com/Yashi248",
+    demo:"#"
+  }
+};
+const modal=document.getElementById("projectModal");
+const modalClose=document.getElementById("modalClose");
+const modalTag=document.getElementById("modalTag");
+const modalTitle=document.getElementById("modalTitle");
+const modalDesc=document.getElementById("modalDesc");
+const modalDetail=document.getElementById("modalDetail");
+const modalStack=document.getElementById("modalStack");
+const modalGithub=document.getElementById("modalGithub");
+const modalDemo=document.getElementById("modalDemo");
+function openProject(id){
+  const p=projects[id];
+  if(!p)return;
+  modalTag.textContent=p.tag;
+  modalTitle.textContent=p.title;
+  modalDesc.textContent=p.desc;
+  modalDetail.textContent=p.detail;
+  modalStack.innerHTML=p.stack.map(s=>"<span>"+s+"</span>").join("");
+  modalGithub.href=p.github;
+  modalDemo.href=p.demo;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeProject(){
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+document.querySelectorAll("[data-project]").forEach(btn=>btn.addEventListener("click",()=>openProject(btn.dataset.project)));
+modalClose.addEventListener("click",closeProject);
+modal.addEventListener("click",e=>{if(e.target===modal)closeProject()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProject()});
+
+// floating dot field over the content sections, drifting toward the cursor
+(function(){
+  const df=document.getElementById("dotfield");
+  if(!df) return;
+  const ctx=df.getContext("2d");
+  let dpr=Math.min(window.devicePixelRatio||1,2),W=0,H=0;
+  const dots=[];
+  const COUNT=window.innerWidth<760?28:54;
+  const mp={x:-999,y:-999};
+  function size(){
+    W=df.clientWidth;H=df.clientHeight;
+    df.width=W*dpr;df.height=H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function seed(){
+    dots.length=0;
+    for(let i=0;i<COUNT;i++) dots.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.6+.6});
+  }
+  window.addEventListener("resize",()=>{size();seed();});
+  window.addEventListener("mousemove",e=>{mp.x=e.clientX;mp.y=e.clientY;});
+  size();seed();
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const d of dots){
+      const dx=mp.x-d.x,dy=mp.y-d.y,dist=Math.hypot(dx,dy);
+      if(dist<160){d.vx+=dx/dist*.02;d.vy+=dy/dist*.02;}
+      d.vx*=.96;d.vy*=.96;
+      d.x+=d.vx;d.y+=d.vy;
+      if(d.x<0)d.x=W;if(d.x>W)d.x=0;if(d.y<0)d.y=H;if(d.y>H)d.y=0;
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle="rgba(201,150,58,.45)";
+      ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+})();
+</script>
+</body>
+</html>
