@@ -50,7 +50,7 @@ function resize(){
 window.addEventListener("resize",resize);
 resize();
 
-scene.add(new THREE.HemisphereLight(0xfff6e8,0xb9c2c8,.52));
+scene.add(new THREE.HemisphereLight(0xfff6e8,0xb9c2c8,.62));
 const sun=new THREE.DirectionalLight(0xffffff,1.45);
 sun.position.set(32,42,28);
 sun.castShadow=true;
@@ -91,6 +91,8 @@ const mat={
   gold:new THREE.MeshStandardMaterial({color:0xc9963a,roughness:.34,metalness:.55}),
   maroon:new THREE.MeshStandardMaterial({color:0x9c6a78,roughness:.7,metalness:.05}),
   glass:new THREE.MeshStandardMaterial({color:0xa9c6d2,roughness:.16,metalness:.25}),
+  water:new THREE.MeshStandardMaterial({color:0x6fa6cc,roughness:.12,metalness:.35}),
+  sand:new THREE.MeshStandardMaterial({color:0xdcc59c,roughness:.97,metalness:0}),
   dark:new THREE.MeshStandardMaterial({color:0x47505a,roughness:.55,metalness:.12}),
   rubber:new THREE.MeshStandardMaterial({color:0x33383f,roughness:.8,metalness:0}),
   orange:new THREE.MeshStandardMaterial({color:0xd99b63,roughness:.7,metalness:.05}),
@@ -155,18 +157,13 @@ function addPalm(g,x,z,h){
 
 function hussainSagar(z){
   const g=new THREE.Group();
-  // the lake itself — a cool water sheet
-  g.add(pos(box(30,.3,22,mat.glass),0,.05,0));
-  // Necklace Road: a curved promenade arc hugging the west bank
-  const road=torus(15,.5,6,40,mat.cream3);
-  road.rotation.x=Math.PI/2;
-  road.scale.set(.6,1,1);
-  g.add(pos(road,-14,.12,-2));
+  // the lake — a wide blue water sheet the island sits in the middle of
+  g.add(pos(box(44,.3,32,mat.water),0,.05,0));
   // central island — stepped stone plinth rising from the water
   g.add(pos(box(6.4,.7,6.4,mat.cream3),0,.55,0));
   g.add(pos(box(5.2,.7,5.2,mat.cream2),0,1.15,0));
   g.add(pos(box(3.6,.6,3.6,mat.cream),0,1.7,0));
-  // (Buddha statue, palms, skyline + characters are placed here once the glTF models load)
+  // (Buddha + distant skyline + characters are placed here once the glTF models load)
   g.position.z=z;
   scene.add(g);
   return g;
@@ -175,40 +172,14 @@ function hussainSagar(z){
 function collegeWorld(z){
   const g=new THREE.Group();
   g.add(pos(box(34,.22,24,mat.ground),0,0,0));
-  // main block with floor cornices + a window band
-  g.add(pos(box(19,5.2,7,mat.cream),0,2.6,0));
-  [1.9,3.5].forEach(by=>g.add(pos(box(19.3,.22,7.3,mat.cream3),0,by,0)));
-  g.add(pos(box(19.05,1.2,.1,mat.glass),0,2.9,3.5)); // glazing strip
-  // wings with recessed window rows
-  [-12.5,12.5].forEach(wx=>{
-    g.add(pos(box(6,4.2,6.5,mat.cream),wx,2.1,.25));
-    for(let r=0;r<2;r++) g.add(pos(box(6.05,.7,.1,mat.glass),wx,1.5+r*1.5,3.5));
-  });
-  // clock tower: wide base, inset upper stage, dome, spire
-  g.add(pos(box(3.6,7,3.6,mat.cream),0,3.5,0));
-  g.add(pos(box(2.7,4.8,2.7,mat.cream),0,9.4,0));
-  g.add(pos(box(1.6,1.6,.12,mat.dark),0,9.6,1.36)); // clock face
-  const cap=sphere(1.7,14,8,mat.cream);
-  scl(cap,1,.6,1);
-  g.add(pos(cap,0,12.1,0));
-  g.add(pos(cone(.42,2.4,8,mat.gold),0,13.9,0));
-  // flagpole + flag anchored to the pole
-  g.add(pos(cyl(.08,.08,7,6,mat.dark),-6.8,3.5,-4.5));
-  g.add(pos(box(2.2,1,.08,mat.maroon),-5.62,6.5,-4.5));
   addTiles(g,1.4,1.4,8,5,6);
-  // lighter stone entrance path between the wings
-  g.add(pos(box(4.2,.1,9,mat.cream3),0,.07,7.5));
-  [[-10,-7],[-6,-7],[6,-7],[10,-7],[-13,6],[13,6]].forEach(([x,pz])=>{
-    g.add(pos(cyl(.18,.24,2.8,6,mat.bark),x,1.4,pz));
-    const crown=sphere(1.25,8,6,mat.green);
-    scl(crown,1,.85,1);
-    g.add(pos(crown,x,3.15,pz));
-  });
-  // entrance gateway arch (the SASTRA gate)
-  g.add(pos(box(.7,4.2,.7,mat.cream),-3.6,2.1,9.5));
-  g.add(pos(box(.7,4.2,.7,mat.cream),3.6,2.1,9.5));
-  g.add(pos(box(8.5,1.1,1,mat.cream2),0,4.6,9.5));
-  g.add(pos(box(7.4,.5,.3,mat.gold),0,4.6,10.05));
+  // lighter stone entrance path
+  g.add(pos(box(4.2,.1,11,mat.cream3),0,.07,7.5));
+  // entrance gateway arch (the SASTRA gate — gold accent)
+  g.add(pos(box(.7,4.2,.7,mat.cream),-3.6,2.1,10.5));
+  g.add(pos(box(.7,4.2,.7,mat.cream),3.6,2.1,10.5));
+  g.add(pos(box(8.5,1.1,1,mat.cream2),0,4.6,10.5));
+  g.add(pos(box(7.4,.5,.3,mat.gold),0,4.6,11.05));
   g.position.z=z;
   scene.add(g);
   return g;
@@ -216,30 +187,10 @@ function collegeWorld(z){
 
 function bengaluru(z){
   const g=new THREE.Group();
-  g.add(pos(box(36,.22,26,mat.ground),0,0,0));
-  // Raheja Towers — tall banded office tower, the centerpiece
-  g.add(pos(box(6,1,6,mat.cream3),0,.5,-2));               // plinth
-  g.add(pos(box(5,19,5,mat.cream),0,10,-2));               // shaft
-  for(let y=2;y<18;y+=1.2) g.add(pos(box(5.08,.55,5.08,mat.glass),0,y,-2)); // window bands
-  [-1.6,0,1.6].forEach(mx=>g.add(pos(box(.16,17,.16,mat.cream3),mx,10,.55))); // mullions
-  g.add(pos(box(3.2,1.6,3.2,mat.cream),0,20.3,-2));        // setback crown
-  g.add(pos(cyl(.08,.08,2.4,6,mat.dark),0,22.3,-2));       // roof mast
-  // surrounding tech-city skyline
-  [[-11,7,3,2.6],[-8,10,-6,2.4],[-13,5,-3,3.0],[9,8,-5,2.6],[12,11,2,2.8],[8,6,5,3.0],[-6,9,8,2.2],[6,7,9,2.4]].forEach(([x,h,pz,w],i)=>{
-    const m=[mat.cream,mat.cream2,mat.cream3][i%3];
-    g.add(pos(box(w,h,w,m),x,h/2,pz));
-    for(let y=1.5;y<h-.5;y+=1.4) g.add(pos(box(w+.04,.32,w+.04,mat.glass),x,y,pz));
-    g.add(pos(box(w+.16,.26,w+.16,mat.cream3),x,h+.1,pz)); // parapet
-  });
-  // Namma Metro elevated viaduct running along MG Road
-  g.add(pos(box(34,.6,2.4,mat.cream2),0,4.2,9));
-  for(let x=-15;x<=15;x+=5) g.add(pos(cyl(.5,.6,4,8,mat.cream3),x,2,9));
-  // boulevard trees along the road
-  [-12,-4,4,12].forEach(x=>{
-    g.add(pos(cyl(.18,.24,2.4,6,mat.bark),x,1.2,11.5));
-    const crown=sphere(1.1,8,6,mat.green);scl(crown,1,.85,1);
-    g.add(pos(crown,x,3,11.5));
-  });
+  g.add(pos(box(40,.22,28,mat.ground),0,0,0));
+  // Namma Metro elevated viaduct running along MG Road (kept as a procedural detail)
+  g.add(pos(box(36,.6,2.4,mat.cream2),0,4.2,11));
+  for(let x=-16;x<=16;x+=5.3) g.add(pos(cyl(.5,.6,4,8,mat.cream3),x,2,11));
   g.position.z=z;
   scene.add(g);
   return g;
@@ -247,36 +198,13 @@ function bengaluru(z){
 
 function asuWorld(z){
   const g=new THREE.Group();
-  g.add(pos(box(38,.22,26,mat.ground),0,0,0));
-  addTiles(g,2.2,2.2,11,7,2);
-  g.add(pos(box(20,5.8,7.5,mat.cream),0,2.9,0));
-  g.add(pos(box(20.4,.42,.22,mat.maroon),0,5.68,-3.88));
-  g.add(pos(box(6,5,7,mat.cream),-13,2.5,.2));
-  g.add(pos(box(6,5,7,mat.cream),13,2.5,.2));
-  // bell tower with a flat Old Main-style dome (scaled sphere, not a cone)
-  g.add(pos(box(2.5,13.2,2.5,mat.cream),0,6.6,0));
-  const tdome=sphere(1.9,14,8,mat.maroon);
-  scl(tdome,1,.5,1);
-  g.add(pos(tdome,0,13.5,0));
-  g.add(pos(cone(.16,1,8,mat.gold),0,14.6,0));
-  // ASU sun: central sphere + radiating spokes
-  const sunGrp=new THREE.Group();
-  sunGrp.add(sphere(2,18,16,mat.sun));
-  for(let i=0;i<16;i++){
-    const a=(i/16)*Math.PI*2;
-    const spoke=cyl(.05,.05,1.8,6,mat.sun);
-    spoke.position.set(Math.cos(a)*2.9,Math.sin(a)*2.9,0);
-    spoke.rotation.z=a-Math.PI/2;
-    sunGrp.add(spoke);
-  }
-  g.add(pos(sunGrp,13,16,-9));
-  [[-14,-6,8.5],[-10,-6,10],[10,-6,9],[14,-6,7.8],[-16,6,6.7],[16,6,6.7]].forEach(([x,pz,h])=>addPalm(g,x,pz,h));
-  // sign posts: thin pillar + a small panel on top
-  [[-8,8],[0,9],[8,8]].forEach(([x,pz])=>{
-    g.add(pos(cyl(.16,.16,2.6,8,mat.dark),x,1.3,pz));
-    g.add(pos(box(2.4,1.1,.18,mat.maroon),x,3,pz));
-    g.add(pos(box(2.1,.12,.22,mat.gold),x,2.6,pz));
-  });
+  g.add(pos(box(40,.22,28,mat.sand),0,0,0)); // desert ground
+  // ASU sun — a soft glowing sphere on the horizon (no spokes) + a faint halo
+  const halo=new THREE.Mesh(new THREE.SphereGeometry(4.4,20,16),new THREE.MeshBasicMaterial({color:0xf4c463,transparent:true,opacity:.16,depthWrite:false}));
+  g.add(pos(halo,16,9,-12));
+  g.add(pos(sphere(2.6,28,22,mat.sun),16,9,-12));
+  // maroon ASU ground accent
+  g.add(pos(box(22,.12,1.2,mat.maroon),0,.18,-7));
   g.position.z=z;
   scene.add(g);
   return g;
@@ -307,10 +235,10 @@ function podium(z){
 
 const Z=[0,-38,-76,-114,-152];
 const worldHyderabad=hussainSagar(Z[0]);
-collegeWorld(Z[1]);
-bengaluru(Z[2]);
-asuWorld(Z[3]);
-podium(Z[4]);
+const worldSastra=collegeWorld(Z[1]);
+const worldBengaluru=bengaluru(Z[2]);
+const worldASU=asuWorld(Z[3]);
+const worldPodium=podium(Z[4]);
 
 const curve=new THREE.CatmullRomCurve3([
   new THREE.Vector3(0,1.2,3),
@@ -344,7 +272,11 @@ const ASSETS={
   skA:"models/building-skyscraper-a.glb",skB:"models/building-skyscraper-b.glb",skC:"models/building-skyscraper-c.glb",skD:"models/building-skyscraper-d.glb",skE:"models/building-skyscraper-e.glb",
   lowA:"models/low-detail-building-a.glb",lowB:"models/low-detail-building-b.glb",lowC:"models/low-detail-building-c.glb",lowD:"models/low-detail-building-d.glb",
   male:"models/character-male-a.glb",maleB:"models/character-male-b.glb",femA:"models/character-female-a.glb",femB:"models/character-female-b.glb",
-  treeD:"models/tree_detailed.glb",treeO:"models/tree_oak.glb",treeF:"models/tree_fat.glb",palmT:"models/tree_palmDetailedTall.glb",palmS:"models/tree_palmTall.glb",flower:"models/flower_purpleA.glb"
+  treeD:"models/tree_detailed.glb",treeO:"models/tree_oak.glb",treeF:"models/tree_fat.glb",palmT:"models/tree_palmDetailedTall.glb",palmS:"models/tree_palmTall.glb",flower:"models/flower_purpleA.glb",
+  trainA:"models/train-a.glb",trainB:"models/train-b.glb",trainC:"models/train-c.glb",
+  rock1:"models/rocksand1.glb",rock2:"models/rocksand2.glb",rock3:"models/rocksand3.glb",
+  column:"models/column.glb",trophy:"models/trophy.glb",statue:"models/statue.glb",
+  indA:"models/ind-a.glb",indH:"models/ind-h.glb",indM:"models/ind-m.glb"
 };
 const M={};
 function loadAll(done){
@@ -369,8 +301,8 @@ function model(key,h){
   const wrap=new THREE.Group();wrap.add(inner);
   return wrap;
 }
-// animated characters
-let traveler=null;
+// animated characters + the Bengaluru metro train
+let traveler=null,bengaluruTrain=null;
 const mixers=[];
 const charClock=new THREE.Clock();
 function playClip(root,clips,name){
@@ -390,16 +322,83 @@ function addChar(parent,key,x,z,clip,rot){
   parent.add(o);
   playClip(o,M[key].animations,clip||"idle");
 }
+// place a building/tree at (x,y,z) scaled to height h
+function put(parent,key,x,z,h,rot){
+  const o=model(key,h);o.position.set(x,0,z);if(rot!==undefined)o.rotation.y=rot;parent.add(o);return o;
+}
+// place a character (can sit at an arbitrary y, e.g. on a podium block)
+function placeChar(parent,key,x,y,z,clip,rot){
+  if(!M[key])return;
+  const o=model(key,1.8);o.position.set(x,y,z);if(rot!==undefined)o.rotation.y=rot;parent.add(o);
+  playClip(o,M[key].animations,clip||"idle");
+}
 function buildModels(){
   try{
-    const g=worldHyderabad;
-    if(g){
-      const b=model("buddha",6.2);b.position.set(0,2.0,0);g.add(b);
-      [[-2.1,-2.1,"palmT"],[2.1,-2.1,"palmS"],[-2.1,2.1,"palmS"],[2.1,2.1,"palmT"]].forEach(([x,zz,k])=>{const p=model(k,3.4);p.position.set(x,2.0,zz);g.add(p);});
-      [[-12,-9,"lowA",5],[-7,-10,"lowB",6],[-1,-10.5,"lowC",4.6],[5,-10,"lowD",6.4],[10,-9.5,"lowA",5.2],[14,-9,"lowB",5.6]].forEach(([x,zz,k,h])=>{const o=model(k,h);o.position.set(x,0,zz);g.add(o);});
-      addChar(g,"femA",-6,4,"idle",1.2);
-      addChar(g,"maleB",6,5,"idle",-1.4);
+    // --- HYDERABAD: Buddha + a clear, closer city skyline across the lake ---
+    if(worldHyderabad){
+      const G=worldHyderabad;
+      const b=model("buddha",6.4);b.position.set(0,2.0,0);G.add(b);
+      [[-18,-9,"bldA",8],[-13,-10,"indH",9.5],[-7,-10.5,"bldB",7.5],[-1,-11,"indA",10],[5,-10.5,"bldC",8],[11,-10,"indM",9],[17,-9,"bldD",8],[-22,-8,"bldE",6.5],[22,-8,"bldA",6.8]].forEach(([x,z,k,h])=>put(G,k,x,z,h));
+      placeChar(G,"femA",-7,0,5,"idle",1.2);
+      placeChar(G,"maleB",7,0,6,"idle",-1.4);
     }
+    // --- SASTRA: a real campus — main hall, a colonnade, a courtyard statue, a quad ---
+    if(worldSastra){
+      const G=worldSastra;
+      put(G,"bldB",0,-6,9.5);                          // main academic hall
+      put(G,"indH",-12,-4,8); put(G,"indM",12,-4,8);   // wings
+      put(G,"bldA",-10,5,6.5,.3); put(G,"bldC",10,5,6.5,-.3);
+      for(let i=-3;i<=3;i++) put(G,"column",i*2.2,-1.5,3.6); // colonnade in front of the hall
+      const st=model("statue",3.4);st.position.set(0,0,3.5);G.add(st); // courtyard statue
+      [[-3,7,"treeO"],[3,7,"treeD"],[-3,11,"treeD"],[3,11,"treeO"]].forEach(([x,z,k])=>put(G,k,x,z,3.4));
+      placeChar(G,"male",-2,0,8,"walk",.5);
+      placeChar(G,"femA",2,0,6,"idle",-1.0);
+      placeChar(G,"maleB",-1,0,10,"walk",2.6);
+    }
+    // --- BENGALURU: tech-park cluster + a metro train on the viaduct ---
+    if(worldBengaluru){
+      const G=worldBengaluru;
+      [[0,-3,"skA",15],[-7,-1,"skB",12],[7,-2,"skC",13],[-5,-9,"skD",11],[6,-9,"skE",12.5],[-13,3,"bldB",8],[13,2,"bldC",8.5],[14,-6,"skA",10],[-14,-5,"skB",9.5]].forEach(([x,z,k,h])=>put(G,k,x,z,h));
+      [-12,-4,4,12].forEach(x=>put(G,"treeD",x,14,3));
+      placeChar(G,"femB",-3,0,8,"walk",.3);
+      placeChar(G,"maleB",4,0,9,"walk",2.9);
+      // assemble a 3-car train, centred on origin, sitting on the viaduct deck
+      const train=new THREE.Group();let tx=0;
+      ["trainA","trainB","trainC"].forEach(k=>{
+        if(!M[k])return;
+        const car=model(k,1.7);
+        let bb=new THREE.Box3().setFromObject(car);
+        if((bb.max.z-bb.min.z)>(bb.max.x-bb.min.x)){car.rotation.y=Math.PI/2;bb=new THREE.Box3().setFromObject(car);}
+        const len=bb.max.x-bb.min.x;car.position.x=tx+len/2;tx+=len+0.15;train.add(car);
+      });
+      train.children.forEach(c=>c.position.x-=tx/2);
+      train.position.set(0,4.5,11);G.add(train);bengaluruTrain=train;
+    }
+    // --- ASU: desert — Palm Walk, A-Mountain, scattered rocks (no homes) ---
+    if(worldASU){
+      const G=worldASU;
+      for(let i=0;i<6;i++){const z=8-i*3;put(G,"palmT",-3.2,z,4.6);put(G,"palmS",3.2,z,4.6);}
+      const mt=model("rock1",9);mt.position.set(-15,0,-9);G.add(mt); // A-Mountain butte
+      const A=new THREE.Group();
+      const la=box(.4,2.4,.4,mat.gold);la.position.set(-.5,1.2,0);la.rotation.z=.34;A.add(la);
+      const ra=box(.4,2.4,.4,mat.gold);ra.position.set(.5,1.2,0);ra.rotation.z=-.34;A.add(ra);
+      const ba=box(1.0,.4,.4,mat.gold);ba.position.set(0,1.15,0);A.add(ba);
+      A.position.set(-15,8.4,-8);A.scale.setScalar(1.3);G.add(A);
+      [[-6,6,"rock2"],[7,7,"rock3"],[10,-3,"rock2"],[-9,-2,"rock3"],[2,9,"rock2"]].forEach(([x,z,k])=>put(G,k,x,z,1.4));
+      placeChar(G,"male",-2,0,5,"walk",.2);
+      placeChar(G,"femA",2,0,3,"idle",-1.0);
+    }
+    // --- PODIUM: hero + trophy + a small crowd ---
+    if(worldPodium){
+      const G=worldPodium;
+      placeChar(G,"male",-0.6,3.7,-3,"idle",0);
+      const tr=model("trophy",1.5);tr.position.set(1.1,3.45,-3);G.add(tr);
+      placeChar(G,"femA",-4,2.0,-3,"idle",.2);
+      placeChar(G,"maleB",4,1.4,-3,"idle",-.2);
+      placeChar(G,"femB",-3,0,4,"idle",2.6);
+      placeChar(G,"maleB",4,0,4.5,"idle",-2.6);
+    }
+    // --- the hero walking the whole path ---
     if(M["male"]){
       traveler=model("male",1.75);
       scene.add(traveler);
@@ -492,7 +491,7 @@ function updateGrid(){
 }
 
 const targets=Z.map(z=>new THREE.Vector3(0,4.2,z));
-const camOffset=new THREE.Vector3(36,40,36);
+const camOffset=new THREE.Vector3(46,52,46);
 let raw=0,smooth=0,inStory=false;
 let target=new THREE.Vector3().copy(targets[0]);
 let look=new THREE.Vector3().copy(targets[0]);
@@ -536,9 +535,9 @@ try{
     try{
       if(THREE.SSAOPass){
         ssaoPass=new THREE.SSAOPass(scene,camera,1,1);
-        ssaoPass.kernelRadius=8;    // tighter AO = contact shadows only, not whole-scene darkening
-        ssaoPass.minDistance=0.001;
-        ssaoPass.maxDistance=0.04;
+        ssaoPass.kernelRadius=6;    // soft contact shadows only — avoids the heavy black shade
+        ssaoPass.minDistance=0.0008;
+        ssaoPass.maxDistance=0.02;
         composer.addPass(ssaoPass);
         firstAdded=true;
       }
@@ -586,7 +585,7 @@ function animate(time){
   const float=Math.sin(time*.0008)*.4;
   camera.position.copy(look).add(camOffset);
   camera.position.x+=float;
-  camera.lookAt(look.x,look.y+2.4,look.z);
+  camera.lookAt(look.x,look.y+1.2,look.z);
   trailGeo.setDrawRange(0,Math.floor(clamp(smooth,0,1)*trailCount));
   const dt=charClock.getDelta();
   for(let i=0;i<mixers.length;i++) mixers[i].update(dt);
@@ -596,6 +595,7 @@ function animate(time){
     traveler.position.set(p.x,0,p.z);
     traveler.rotation.y=Math.atan2(tan.x,tan.z);
   }
+  if(bengaluruTrain) bengaluruTrain.position.x=((time*0.004)%34)-17;
   camera.updateMatrixWorld();
   updateGrid();
   if(composer) composer.render(); else renderer.render(scene,camera);
