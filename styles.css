@@ -248,7 +248,7 @@ button,input,textarea{font:inherit}
 }
 .chapter-stack{
   position:relative;
-  min-height:120px;
+  min-height:230px;
   margin-bottom:18px;
 }
 .chapter{
@@ -268,19 +268,20 @@ button,input,textarea{font:inherit}
   line-height:1;
   letter-spacing:-.01em;
   font-weight:800;
-  max-width:280px;
-  margin-bottom:0;
+  max-width:300px;
+  margin-bottom:16px;
 }
-/* body paragraph kept in DOM for SEO/a11y but hidden in the minimal sticky layer */
+/* chapter body copy — visible under the heading */
 .chapter p:not(.section-label){
-  position:absolute;
-  width:1px;
-  height:1px;
-  overflow:hidden;
-  clip:rect(0 0 0 0);
-  white-space:nowrap;
+  max-width:320px;
+  color:var(--soft);
+  font-size:14px;
+  line-height:1.6;
+  border-left:2px solid var(--gold);
+  padding-left:16px;
 }
 .chapter.asu .section-label,.chapter.asu h2{color:var(--maroon)}
+.chapter.asu p:not(.section-label){border-left-color:var(--maroon)}
 .chapter-nav{
   display:flex;
   flex-direction:row;
