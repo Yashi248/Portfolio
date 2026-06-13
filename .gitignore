@@ -1,8 +1,12 @@
 # local tooling / dev
 .claude/
 
+# raw model kits (we curate the used ones into models/)
+models_scrolly/
+
 # backups & build artifacts
 index.backup.html
 contact_sheet.jpg
 debug_sheet.jpg
 PORTFOLIO_PROMPT.md
+node_modules/
