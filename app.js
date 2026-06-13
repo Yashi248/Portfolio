@@ -11,7 +11,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=0.98;
+renderer.toneMappingExposure=1.03;
 
 const scene=new THREE.Scene();
 // soft vertical gradient sky so light buildings have something to separate against
@@ -91,8 +91,12 @@ const mat={
   gold:new THREE.MeshStandardMaterial({color:0xc9963a,roughness:.34,metalness:.55}),
   maroon:new THREE.MeshStandardMaterial({color:0x9c6a78,roughness:.7,metalness:.05}),
   glass:new THREE.MeshStandardMaterial({color:0xa9c6d2,roughness:.16,metalness:.25}),
-  water:new THREE.MeshStandardMaterial({color:0x6fa6cc,roughness:.12,metalness:.35}),
-  sand:new THREE.MeshStandardMaterial({color:0xdcc59c,roughness:.97,metalness:0}),
+  water:new THREE.MeshStandardMaterial({color:0x86c8ea,roughness:.12,metalness:.35}),
+  sand:new THREE.MeshStandardMaterial({color:0xc1924d,roughness:.97,metalness:0}),
+  grass:new THREE.MeshStandardMaterial({color:0x8caf5e,roughness:.95,metalness:0}),
+  grass2:new THREE.MeshStandardMaterial({color:0x79a04e,roughness:.95,metalness:0}),
+  screen:new THREE.MeshStandardMaterial({color:0x1b2a3a,emissive:0x3fa7ff,emissiveIntensity:.6,roughness:.3}),
+  road:new THREE.MeshStandardMaterial({color:0x2a2d33,roughness:.9,metalness:.05}),
   dark:new THREE.MeshStandardMaterial({color:0x47505a,roughness:.55,metalness:.12}),
   rubber:new THREE.MeshStandardMaterial({color:0x33383f,roughness:.8,metalness:0}),
   orange:new THREE.MeshStandardMaterial({color:0xd99b63,roughness:.7,metalness:.05}),
@@ -159,6 +163,11 @@ function hussainSagar(z){
   const g=new THREE.Group();
   // the lake — a wide blue water sheet the island sits in the middle of
   g.add(pos(box(44,.3,32,mat.water),0,.05,0));
+  // ring road hugging the lake shore
+  g.add(pos(box(50,.12,2.6,mat.road),0,.12,17.5));
+  g.add(pos(box(50,.12,2.6,mat.road),0,.12,-17.5));
+  g.add(pos(box(2.6,.12,37,mat.road),23.5,.12,0));
+  g.add(pos(box(2.6,.12,37,mat.road),-23.5,.12,0));
   // central island — stepped stone plinth rising from the water
   g.add(pos(box(6.4,.7,6.4,mat.cream3),0,.55,0));
   g.add(pos(box(5.2,.7,5.2,mat.cream2),0,1.15,0));
@@ -171,15 +180,22 @@ function hussainSagar(z){
 
 function collegeWorld(z){
   const g=new THREE.Group();
-  g.add(pos(box(34,.22,24,mat.ground),0,0,0));
-  addTiles(g,1.4,1.4,8,5,6);
-  // lighter stone entrance path
-  g.add(pos(box(4.2,.1,11,mat.cream3),0,.07,7.5));
-  // entrance gateway arch (the SASTRA gate — gold accent)
-  g.add(pos(box(.7,4.2,.7,mat.cream),-3.6,2.1,10.5));
-  g.add(pos(box(.7,4.2,.7,mat.cream),3.6,2.1,10.5));
-  g.add(pos(box(8.5,1.1,1,mat.cream2),0,4.6,10.5));
-  g.add(pos(box(7.4,.5,.3,mat.gold),0,4.6,11.05));
+  g.add(pos(box(40,.22,26,mat.grass),0,0,0)); // green campus lawn
+  // football field with white markings + goals
+  g.add(pos(box(20,.16,12,mat.grass2),0,.16,-1));
+  g.add(pos(box(20,.06,.3,mat.cream),0,.22,-7));
+  g.add(pos(box(20,.06,.3,mat.cream),0,.22,5));
+  g.add(pos(box(.3,.06,12,mat.cream),-10,.22,-1));
+  g.add(pos(box(.3,.06,12,mat.cream),10,.22,-1));
+  g.add(pos(box(.2,.06,12,mat.cream),0,.22,-1));
+  const circle=torus(1.8,.08,6,28,mat.cream);circle.rotation.x=Math.PI/2;g.add(pos(circle,0,.24,-1));
+  [-9.6,9.6].forEach(gx=>g.add(pos(box(.2,1.4,2.6,mat.cream),gx,.85,-1)));
+  // entrance path + gold gate
+  g.add(pos(box(4.2,.1,9,mat.cream3),0,.12,10));
+  g.add(pos(box(.7,4.2,.7,mat.cream),-3.6,2.1,12.5));
+  g.add(pos(box(.7,4.2,.7,mat.cream),3.6,2.1,12.5));
+  g.add(pos(box(8.5,1.1,1,mat.cream2),0,4.6,12.5));
+  g.add(pos(box(7.4,.5,.3,mat.gold),0,4.6,13.05));
   g.position.z=z;
   scene.add(g);
   return g;
@@ -199,6 +215,7 @@ function bengaluru(z){
 function asuWorld(z){
   const g=new THREE.Group();
   g.add(pos(box(40,.22,28,mat.sand),0,0,0)); // desert ground
+  g.add(pos(box(3.4,.14,26,mat.cream2),0,.16,0)); // Palm Walk path down the centre
   // ASU sun — a soft glowing sphere on the horizon (no spokes) + a faint halo
   const halo=new THREE.Mesh(new THREE.SphereGeometry(4.4,20,16),new THREE.MeshBasicMaterial({color:0xf4c463,transparent:true,opacity:.16,depthWrite:false}));
   g.add(pos(halo,16,9,-12));
@@ -214,20 +231,19 @@ function podium(z){
   const g=new THREE.Group();
   g.add(pos(box(30,.22,24,mat.ground),0,0,0));
   addTiles(g,2.2,2.2,9,7,-2);
-  // finish gate (the single gold accent moment) the walker passes through
-  g.add(pos(box(.6,7,.6,mat.gold),-5,3.5,3));
-  g.add(pos(box(.6,7,.6,mat.gold),5,3.5,3));
-  g.add(pos(box(11,.6,.6,mat.gold),0,7,3));
-  // three-step podium
-  g.add(pos(box(3.8,2,3.8,mat.cream2),-4,1,-3));    // 2nd place
-  g.add(pos(box(3.8,3.2,3.8,mat.cream),0,1.6,-3));   // 1st place (center, tallest)
-  g.add(pos(box(3.8,1.4,3.8,mat.cream3),4,.7,-3));   // 3rd place
-  g.add(pos(box(3.9,.5,3.9,mat.gold),0,3.45,-3));    // gold cap on the winner's block
+  // a desk + glowing monitor + chair — "now I build"
+  g.add(pos(box(6,.3,3,mat.cream),0,2.0,-3));        // desk top
+  [[-2.7,-1.2],[2.7,-1.2],[-2.7,1.2],[2.7,1.2]].forEach(([dx,dz])=>g.add(pos(box(.25,2,.25,mat.cream3),dx,1.0,-3+dz)));
+  g.add(pos(box(.3,1.1,.3,mat.dark),0,2.7,-3.8));    // monitor stand
+  g.add(pos(box(3.6,2.0,.2,mat.dark),0,3.6,-4));      // monitor bezel
+  g.add(pos(box(3.2,1.65,.06,mat.screen),0,3.6,-3.88)); // glowing screen
+  // chair
+  g.add(pos(box(1.5,.22,1.5,mat.cream2),0,1.25,-0.7));
+  g.add(pos(box(1.5,1.5,.22,mat.cream2),0,2.0,0.0));
+  g.add(pos(cyl(.13,.13,1.25,8,mat.dark),0,.62,-0.7));
   // backdrop wall with a gold rule
-  g.add(pos(box(16,8,.5,mat.cream2),0,4,-7));
-  g.add(pos(box(14,.3,.6,mat.gold),0,5.5,-6.7));
-  // floating accent cubes (confetti)
-  [[-3,6,-1],[2,7,-2],[4,6.5,0],[-1,7.5,1]].forEach(([x,y,pz])=>g.add(pos(box(.3,.3,.3,mat.gold),x,y,pz)));
+  g.add(pos(box(18,8.5,.5,mat.cream2),0,4.2,-7));
+  g.add(pos(box(15,.3,.6,mat.gold),0,6,-6.7));
   g.position.z=z;
   scene.add(g);
   return g;
@@ -241,7 +257,7 @@ const worldASU=asuWorld(Z[3]);
 const worldPodium=podium(Z[4]);
 
 const curve=new THREE.CatmullRomCurve3([
-  new THREE.Vector3(0,1.2,3),
+  new THREE.Vector3(-7,1.2,6),
   new THREE.Vector3(-7,1.2,-16),
   new THREE.Vector3(3,1.4,Z[1]+7),
   new THREE.Vector3(-5,1.1,Z[1]-12),
@@ -254,10 +270,7 @@ const curve=new THREE.CatmullRomCurve3([
 const trailGeo=new THREE.TubeGeometry(curve,900,0.07,6,false);
 const trailCount=trailGeo.index.count;
 trailGeo.setDrawRange(0,0);
-const route=new THREE.Mesh(trailGeo,new THREE.MeshStandardMaterial({
-  color:0xc9963a,emissive:0xc9963a,emissiveIntensity:.6,roughness:.3,metalness:.1
-}));
-scene.add(route);
+// (gold trail removed — the hero follows the invisible curve, no visible path line)
 
 // ===== glTF models (Kenney kits + Buddha) =====
 const gltfLoader=new THREE.GLTFLoader();
@@ -276,7 +289,8 @@ const ASSETS={
   trainA:"models/train-a.glb",trainB:"models/train-b.glb",trainC:"models/train-c.glb",
   rock1:"models/rocksand1.glb",rock2:"models/rocksand2.glb",rock3:"models/rocksand3.glb",
   column:"models/column.glb",trophy:"models/trophy.glb",statue:"models/statue.glb",
-  indA:"models/ind-a.glb",indH:"models/ind-h.glb",indM:"models/ind-m.glb"
+  indA:"models/ind-a.glb",indH:"models/ind-h.glb",indM:"models/ind-m.glb",
+  boat:"models/boat.glb",boat2:"models/boat2.glb",carA:"models/car-a.glb",carB:"models/car-b.glb"
 };
 const M={};
 function loadAll(done){
@@ -302,7 +316,7 @@ function model(key,h){
   return wrap;
 }
 // animated characters + the Bengaluru metro train
-let traveler=null,bengaluruTrain=null;
+let traveler=null,bengaluruTrain=null,heroIdle=null,heroRun=null,heroJump=null,heroSit=null;
 const mixers=[];
 const charClock=new THREE.Clock();
 function playClip(root,clips,name){
@@ -326,34 +340,45 @@ function addChar(parent,key,x,z,clip,rot){
 function put(parent,key,x,z,h,rot){
   const o=model(key,h);o.position.set(x,0,z);if(rot!==undefined)o.rotation.y=rot;parent.add(o);return o;
 }
-// place a character (can sit at an arbitrary y, e.g. on a podium block)
+// place a character (can sit at an arbitrary y, e.g. on a chair)
 function placeChar(parent,key,x,y,z,clip,rot){
   if(!M[key])return;
   const o=model(key,1.8);o.position.set(x,y,z);if(rot!==undefined)o.rotation.y=rot;parent.add(o);
   playClip(o,M[key].animations,clip||"idle");
 }
+// a stylised oval stadium (green field + tiered seating + floodlights)
+function addStadium(g,cx,cz){
+  const rx=8,rz=6,segs=22;
+  g.add(pos(box(rx*2-1.5,.16,rz*2-1.5,mat.grass2),cx,.14,cz));
+  g.add(pos(box(.22,.18,rz*2-2,mat.cream),cx,.18,cz));
+  for(let tier=0;tier<3;tier++){
+    for(let i=0;i<segs;i++){
+      const a=(i/segs)*Math.PI*2;
+      const x=cx+Math.cos(a)*(rx+1+tier*0.9),z=cz+Math.sin(a)*(rz+1+tier*0.9);
+      const seat=box(1.5,0.7,0.9,tier%2?mat.maroon:mat.cream2);
+      seat.position.set(x,0.4+tier*0.65,z);seat.rotation.y=-a;g.add(seat);
+    }
+  }
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([sx,sz])=>{
+    g.add(pos(cyl(.12,.16,5,6,mat.dark),cx+sx*(rx+3),2.5,cz+sz*(rz+3)));
+    g.add(pos(box(1.4,.5,.3,mat.cream),cx+sx*(rx+3),5.1,cz+sz*(rz+3)));
+  });
+}
 function buildModels(){
   try{
-    // --- HYDERABAD: Buddha + a clear, closer city skyline across the lake ---
+    // --- HYDERABAD: just the big Buddha on its island in the lake ---
     if(worldHyderabad){
       const G=worldHyderabad;
-      const b=model("buddha",6.4);b.position.set(0,2.0,0);G.add(b);
-      [[-18,-9,"bldA",8],[-13,-10,"indH",9.5],[-7,-10.5,"bldB",7.5],[-1,-11,"indA",10],[5,-10.5,"bldC",8],[11,-10,"indM",9],[17,-9,"bldD",8],[-22,-8,"bldE",6.5],[22,-8,"bldA",6.8]].forEach(([x,z,k,h])=>put(G,k,x,z,h));
-      placeChar(G,"femA",-7,0,5,"idle",1.2);
-      placeChar(G,"maleB",7,0,6,"idle",-1.4);
+      const b=model("buddha",10);b.position.set(0,2.0,0);G.add(b);
     }
-    // --- SASTRA: a real campus — main hall, a colonnade, a courtyard statue, a quad ---
+    // --- SASTRA: a green campus — football field, academic blocks at the back, students ---
     if(worldSastra){
       const G=worldSastra;
-      put(G,"bldB",0,-6,9.5);                          // main academic hall
-      put(G,"indH",-12,-4,8); put(G,"indM",12,-4,8);   // wings
-      put(G,"bldA",-10,5,6.5,.3); put(G,"bldC",10,5,6.5,-.3);
-      for(let i=-3;i<=3;i++) put(G,"column",i*2.2,-1.5,3.6); // colonnade in front of the hall
-      const st=model("statue",3.4);st.position.set(0,0,3.5);G.add(st); // courtyard statue
-      [[-3,7,"treeO"],[3,7,"treeD"],[-3,11,"treeD"],[3,11,"treeO"]].forEach(([x,z,k])=>put(G,k,x,z,3.4));
-      placeChar(G,"male",-2,0,8,"walk",.5);
-      placeChar(G,"femA",2,0,6,"idle",-1.0);
-      placeChar(G,"maleB",-1,0,10,"walk",2.6);
+      put(G,"bldB",-11,-9,8); put(G,"bldA",0,-10,9); put(G,"bldC",11,-9,8);
+      [[-13,3,"treeO"],[13,3,"treeD"],[-13,8,"treeD"],[13,8,"treeO"],[-7,11,"treeO"],[7,11,"treeD"]].forEach(([x,z,k])=>put(G,k,x,z,3.4));
+      placeChar(G,"male",-3,0,2,"walk",.5);
+      placeChar(G,"femA",3,0,0,"idle",-1.0);
+      placeChar(G,"maleB",0,0,4,"idle",2.6);
     }
     // --- BENGALURU: tech-park cluster + a metro train on the viaduct ---
     if(worldBengaluru){
@@ -374,35 +399,39 @@ function buildModels(){
       train.children.forEach(c=>c.position.x-=tx/2);
       train.position.set(0,4.5,11);G.add(train);bengaluruTrain=train;
     }
-    // --- ASU: desert — Palm Walk, A-Mountain, scattered rocks (no homes) ---
+    // --- ASU: desert — just the Palm Walk down the centre + A-Mountain ---
     if(worldASU){
       const G=worldASU;
-      for(let i=0;i<6;i++){const z=8-i*3;put(G,"palmT",-3.2,z,4.6);put(G,"palmS",3.2,z,4.6);}
-      const mt=model("rock1",9);mt.position.set(-15,0,-9);G.add(mt); // A-Mountain butte
+      for(let i=0;i<7;i++){const z=10-i*3;put(G,"palmT",-3.6,z,5);put(G,"palmS",3.6,z,5);}
+      const mt=model("rock1",9);mt.position.set(-15,0,-8);G.add(mt); // A-Mountain butte
       const A=new THREE.Group();
-      const la=box(.4,2.4,.4,mat.gold);la.position.set(-.5,1.2,0);la.rotation.z=.34;A.add(la);
-      const ra=box(.4,2.4,.4,mat.gold);ra.position.set(.5,1.2,0);ra.rotation.z=-.34;A.add(ra);
+      const la=box(.4,2.4,.4,mat.gold);la.position.set(-.5,1.2,0);la.rotation.z=-.34;A.add(la);
+      const ra=box(.4,2.4,.4,mat.gold);ra.position.set(.5,1.2,0);ra.rotation.z=.34;A.add(ra);
       const ba=box(1.0,.4,.4,mat.gold);ba.position.set(0,1.15,0);A.add(ba);
-      A.position.set(-15,8.4,-8);A.scale.setScalar(1.3);G.add(A);
-      [[-6,6,"rock2"],[7,7,"rock3"],[10,-3,"rock2"],[-9,-2,"rock3"],[2,9,"rock2"]].forEach(([x,z,k])=>put(G,k,x,z,1.4));
-      placeChar(G,"male",-2,0,5,"walk",.2);
-      placeChar(G,"femA",2,0,3,"idle",-1.0);
+      A.position.set(-15,8.4,-7);A.scale.setScalar(1.4);G.add(A);
+      [[12,-3,"rock2"],[14,6,"rock3"],[11,9,"rock2"]].forEach(([x,z,k])=>put(G,k,x,z,1.4));
+      placeChar(G,"male",0,0,6,"walk",Math.PI);
+      placeChar(G,"femA",0,0,-2,"walk",0);
     }
-    // --- PODIUM: hero + trophy + a small crowd ---
+    // --- WORKSPACE: empty desk + chair — the running hero arrives and takes the seat ---
     if(worldPodium){
       const G=worldPodium;
-      placeChar(G,"male",-0.6,3.7,-3,"idle",0);
-      const tr=model("trophy",1.5);tr.position.set(1.1,3.45,-3);G.add(tr);
-      placeChar(G,"femA",-4,2.0,-3,"idle",.2);
-      placeChar(G,"maleB",4,1.4,-3,"idle",-.2);
-      placeChar(G,"femB",-3,0,4,"idle",2.6);
-      placeChar(G,"maleB",4,0,4.5,"idle",-2.6);
+      placeChar(G,"femA",-5,0,3,"idle",.5);
+      placeChar(G,"maleB",5,0,3,"idle",-.5);
     }
-    // --- the hero walking the whole path ---
+    // --- the hero: greets the viewer at the start, then turns and runs the path ---
     if(M["male"]){
       traveler=model("male",1.75);
       scene.add(traveler);
-      playClip(traveler,M["male"].animations,"walk");
+      const mx=new THREE.AnimationMixer(traveler);
+      const clips=M["male"].animations;
+      const find=n=>THREE.AnimationClip.findByName(clips,n);
+      const ai=find("idle"),ar=find("sprint")||find("walk"),aj=find("jump"),as=find("sit");
+      if(ai){heroIdle=mx.clipAction(ai);heroIdle.play();heroIdle.setEffectiveWeight(1);}
+      if(ar){heroRun=mx.clipAction(ar);heroRun.play();heroRun.setEffectiveWeight(0);}
+      if(aj){heroJump=mx.clipAction(aj);heroJump.play();heroJump.setEffectiveWeight(0);}
+      if(as){heroSit=mx.clipAction(as);heroSit.play();heroSit.setEffectiveWeight(0);}
+      mixers.push(mx);
     }
   }catch(e){console.warn("buildModels error:",e);}
 }
@@ -591,9 +620,31 @@ function animate(time){
   for(let i=0;i<mixers.length;i++) mixers[i].update(dt);
   if(traveler){
     const sm=clamp(smooth,0,1);
-    const p=curve.getPoint(sm),tan=curve.getTangent(sm);
-    traveler.position.set(p.x,0,p.z);
-    traveler.rotation.y=Math.atan2(tan.x,tan.z);
+    let wI=0,wR=0,wJ=0,wS=0;
+    if(sm<0.02){                                   // greet the viewer
+      const p=curve.getPoint(0);
+      traveler.position.set(p.x,0,p.z);
+      traveler.rotation.y=Math.atan2(camera.position.x-p.x,camera.position.z-p.z);
+      wI=1;
+    }else if(sm<0.93){                              // run the path
+      const p=curve.getPoint(sm),tan=curve.getTangent(sm);
+      traveler.position.set(p.x,0,p.z);
+      traveler.rotation.y=Math.atan2(tan.x,tan.z);
+      wR=1;
+    }else if(sm<0.97){                              // hop onto the chair
+      const t=(sm-0.93)/0.04,e=curve.getPoint(0.93);
+      traveler.position.set(lerp(e.x,0,t),lerp(0,1.2,t)+Math.sin(t*Math.PI)*0.9,lerp(e.z,Z[4]-0.7,t));
+      traveler.rotation.y=Math.PI;
+      wJ=1;
+    }else{                                          // seated at the desk
+      traveler.position.set(0,1.2,Z[4]-0.7);
+      traveler.rotation.y=Math.PI;
+      wS=1;
+    }
+    if(heroIdle)heroIdle.setEffectiveWeight(heroIdle.getEffectiveWeight()+(wI-heroIdle.getEffectiveWeight())*0.15);
+    if(heroRun)heroRun.setEffectiveWeight(heroRun.getEffectiveWeight()+(wR-heroRun.getEffectiveWeight())*0.15);
+    if(heroJump)heroJump.setEffectiveWeight(heroJump.getEffectiveWeight()+(wJ-heroJump.getEffectiveWeight())*0.2);
+    if(heroSit)heroSit.setEffectiveWeight(heroSit.getEffectiveWeight()+(wS-heroSit.getEffectiveWeight())*0.15);
   }
   if(bengaluruTrain) bengaluruTrain.position.x=((time*0.004)%34)-17;
   camera.updateMatrixWorld();
