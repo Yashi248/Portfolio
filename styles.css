@@ -644,7 +644,7 @@ footer{
   transform:translateX(-50%);
   width:max-content;
   color:rgba(255,255,255,.045);
-  font-size:19vw;          /* pure vw → first/last letter bleed the same on any screen */
+  font-size:15.5vw;        /* pure vw → scales with screen; sized so the Y and H stay well inside the frame */
   font-weight:950;
   line-height:1;
   white-space:nowrap;

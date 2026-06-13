@@ -89,7 +89,8 @@ const mat={
   cream2:new THREE.MeshStandardMaterial({color:0xdcd4c4,roughness:.82,metalness:.02}),
   cream3:new THREE.MeshStandardMaterial({color:0xcabfa8,roughness:.85,metalness:.02}),
   gold:new THREE.MeshStandardMaterial({color:0xc9963a,roughness:.34,metalness:.55}),
-  maroon:new THREE.MeshStandardMaterial({color:0x9c6a78,roughness:.7,metalness:.05}),
+  maroon:new THREE.MeshStandardMaterial({color:0x5e1430,roughness:.82,metalness:0,envMapIntensity:.35}),
+  asuGold:new THREE.MeshStandardMaterial({color:0xffc627,roughness:.4,metalness:.3}),
   glass:new THREE.MeshStandardMaterial({color:0xa9c6d2,roughness:.16,metalness:.25}),
   water:new THREE.MeshStandardMaterial({color:0x86c8ea,roughness:.12,metalness:.35}),
   sand:new THREE.MeshStandardMaterial({color:0xc1924d,roughness:.97,metalness:0}),
@@ -216,6 +217,8 @@ function asuWorld(z){
   const g=new THREE.Group();
   g.add(pos(box(40,.22,28,mat.sand),0,0,0)); // desert ground
   g.add(pos(box(3.4,.14,26,mat.cream2),0,.16,0)); // Palm Walk path down the centre
+  g.add(pos(box(.4,.16,26,mat.maroon),-1.7,.17,0)); // maroon path edges (ASU colour)
+  g.add(pos(box(.4,.16,26,mat.maroon),1.7,.17,0));
   // ASU sun — a soft glowing sphere on the horizon (no spokes) + a faint halo
   const halo=new THREE.Mesh(new THREE.SphereGeometry(4.4,20,16),new THREE.MeshBasicMaterial({color:0xf4c463,transparent:true,opacity:.16,depthWrite:false}));
   g.add(pos(halo,16,9,-12));
@@ -398,16 +401,31 @@ function buildModels(){
       });
       train.children.forEach(c=>c.position.x-=tx/2);
       train.position.set(0,4.5,11);G.add(train);bengaluruTrain=train;
+      // MathCo logo sign on the main tower (appears once mathco.png is dropped in the folder)
+      new THREE.TextureLoader().load("mathco.png",tex=>{
+        tex.encoding=THREE.sRGBEncoding;
+        const sign=new THREE.Mesh(new THREE.PlaneGeometry(4,4),new THREE.MeshBasicMaterial({map:tex,transparent:true}));
+        sign.position.set(0,10,0.2);   // front face of the main skyscraper
+        G.add(sign);
+      },undefined,()=>{/* no logo file yet — skip */});
     }
-    // --- ASU: desert — just the Palm Walk down the centre + A-Mountain ---
+    // --- ASU: desert — Palm Walk + A-Mountain, dressed in maroon & gold ---
     if(worldASU){
       const G=worldASU;
       for(let i=0;i<7;i++){const z=10-i*3;put(G,"palmT",-3.6,z,5);put(G,"palmS",3.6,z,5);}
+      // maroon & gold banner flags lining the Palm Walk
+      for(let i=0;i<4;i++){
+        const z=8-i*4.2;
+        [-5.6,5.6].forEach((x,j)=>{
+          G.add(pos(cyl(.08,.08,4.6,6,mat.dark),x,2.3,z));
+          G.add(pos(box(.1,1.8,1.0,(i+j)%2?mat.maroon:mat.asuGold),x,3.5,z+(x<0?0.55:-0.55)));
+        });
+      }
       const mt=model("rock1",9);mt.position.set(-15,0,-8);G.add(mt); // A-Mountain butte
       const A=new THREE.Group();
-      const la=box(.4,2.4,.4,mat.gold);la.position.set(-.5,1.2,0);la.rotation.z=-.34;A.add(la);
-      const ra=box(.4,2.4,.4,mat.gold);ra.position.set(.5,1.2,0);ra.rotation.z=.34;A.add(ra);
-      const ba=box(1.0,.4,.4,mat.gold);ba.position.set(0,1.15,0);A.add(ba);
+      const la=box(.4,2.4,.4,mat.asuGold);la.position.set(-.5,1.2,0);la.rotation.z=-.34;A.add(la);
+      const ra=box(.4,2.4,.4,mat.asuGold);ra.position.set(.5,1.2,0);ra.rotation.z=.34;A.add(ra);
+      const ba=box(1.0,.4,.4,mat.asuGold);ba.position.set(0,1.15,0);A.add(ba);
       A.position.set(-15,8.4,-7);A.scale.setScalar(1.4);G.add(A);
       [[12,-3,"rock2"],[14,6,"rock3"],[11,9,"rock2"]].forEach(([x,z,k])=>put(G,k,x,z,1.4));
       placeChar(G,"male",0,0,6,"walk",Math.PI);
