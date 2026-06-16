@@ -734,6 +734,15 @@ const projects={
     stack:["Python","Neo4j","Streamlit","Docker","NLTK","scikit-learn"],
     github:"https://github.com/Yashi248",
     demo:"#"
+  },
+  p4:{
+    tag:"Finance ML · Agentic AI",
+    title:"ECRIE - Earnings Call & Risk Intelligence Engine",
+    desc:"An ML system that fuses earnings-call NLP with financial data to predict short-horizon S&P 500 stock movements, served through an agentic pipeline.",
+    detail:"ASU FSE 570 capstone (5-person team). Aligned 917 earnings-call transcripts with 1.24M daily price records and 3,125 quarterly financials into an 863-dimensional feature space FinBERT contextual embeddings, Loughran-McDonald financial sentiment, and engineered financial ratios under a strict chronological protocol to prevent look-ahead bias. XGBoost with FinBERT reached a held-out ROC-AUC of 0.633; SHAP analysis showed that linguistic and structural signals are more predictive than the financials themselves. Deployed as a LangGraph multi-agent pipeline with an RL-style optimization loop and an interactive interface giving transparent BUY/HOLD/SELL recommendations.",
+    stack:["Python","FinBERT","XGBoost","SHAP","LangGraph","Pandas","yfinance","SEC EDGAR"],
+    github:"https://github.com/Yashi248",
+    demo:"#"
   }
 };
 const modal=document.getElementById("projectModal");
