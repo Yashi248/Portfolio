@@ -506,7 +506,7 @@ button,input,textarea{font:inherit}
 .work-stack{padding-top:5px;line-height:1.7}
 .work-main h3{font-size:32px;margin-bottom:10px}
 .work-main p{color:var(--soft);line-height:1.65;font-size:15px}
-.projects-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.projects-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .project-card{
   text-align:left;
   min-height:320px;
@@ -582,6 +582,24 @@ button,input,textarea{font:inherit}
   margin:18px 0;
 }
 .modal p{color:var(--soft);line-height:1.7;margin-bottom:16px}
+.modal-points{list-style:none;margin:0 0 20px;padding:0}
+.modal-points li{
+  position:relative;
+  color:var(--soft);
+  line-height:1.55;
+  font-size:15px;
+  padding:0 0 10px 22px;
+}
+.modal-points li::before{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:9px;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
+}
 .stack{
   display:flex;
   flex-wrap:wrap;

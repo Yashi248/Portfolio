@@ -10,3 +10,6 @@ contact_sheet.jpg
 debug_sheet.jpg
 PORTFOLIO_PROMPT.md
 node_modules/
+
+# mcp servers (contains api keys)
+.mcp.json

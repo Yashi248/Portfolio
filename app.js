@@ -712,7 +712,13 @@ const projects={
     tag:"Generative AI · Live",
     title:"LekhaAI",
     desc:"Fine-tuned a FLUX diffusion model with LoRA for personalized AI invitation generation, shipped to production.",
-    detail:"Fine-tuned FLUX on ~1,500 image–prompt pairs to improve layout quality and text rendering — about 25% higher visual fidelity and ~30% fewer text artifacts versus the base model. Containerized GPU inference on Azure ML (A100), GPT-4 prompt structuring, and a React + TypeScript frontend with an Azure Functions backend, deployed with CI/CD.",
+    detail:[
+      "Fine-tuned FLUX on ~1,500 image–prompt pairs to improve layout quality and text rendering.",
+      "~25% higher visual fidelity and ~30% fewer text artifacts versus the base model.",
+      "Containerized GPU inference on Azure ML (A100), with GPT-4 prompt structuring.",
+      "React + TypeScript frontend and Azure Functions backend, deployed with CI/CD.",
+      "Live in production at lekhaai.com."
+    ],
     stack:["Python","PyTorch","Diffusers","Azure ML","Docker","React","TypeScript"],
     github:"https://github.com/Yashi248",
     demo:"https://www.lekhaai.com"
@@ -721,7 +727,12 @@ const projects={
     tag:"RAG · LLM",
     title:"RAG HR Assistant",
     desc:"Containerized RAG assistant for Workday HR workflows with low-latency semantic retrieval.",
-    detail:"Indexed 10K+ HR records via RocksDB and FAISS for secure, low-latency retrieval. Boosted query accuracy by 83% with context-grounded semantic search and automated common HR queries, cutting manual support workload by an estimated 40%.",
+    detail:[
+      "Indexed 10K+ HR records via RocksDB and FAISS for secure, low-latency retrieval.",
+      "Boosted query accuracy by 83% with context-grounded semantic search.",
+      "Automated common HR queries, cutting manual support workload by an estimated 40%.",
+      "Containerized and served through a FastAPI backend."
+    ],
     stack:["Python","SQL","RocksDB","FAISS","Docker","FastAPI"],
     github:"https://github.com/Yashi248",
     demo:"#"
@@ -730,7 +741,11 @@ const projects={
     tag:"Knowledge Graph",
     title:"Medical Chatbot",
     desc:"A Neo4j knowledge-graph chatbot linking diseases, symptoms, and treatments.",
-    detail:"Designed a Neo4j knowledge graph linking diseases, symptoms, and treatments for intelligent query handling. Integrated NLP entity extraction and intent detection, improving query accuracy by 25%.",
+    detail:[
+      "Designed a Neo4j knowledge graph linking diseases, symptoms, and treatments.",
+      "Integrated NLP entity extraction and intent detection for intelligent query handling.",
+      "Improved query accuracy by 25%."
+    ],
     stack:["Python","Neo4j","Streamlit","Docker","NLTK","scikit-learn"],
     github:"https://github.com/Yashi248",
     demo:"#"
@@ -739,10 +754,31 @@ const projects={
     tag:"Finance ML · Agentic AI",
     title:"ECRIE - Earnings Call & Risk Intelligence Engine",
     desc:"An ML system that fuses earnings-call NLP with financial data to predict short-horizon S&P 500 stock movements, served through an agentic pipeline.",
-    detail:"ASU FSE 570 capstone (5-person team). Aligned 917 earnings-call transcripts with 1.24M daily price records and 3,125 quarterly financials into an 863-dimensional feature space FinBERT contextual embeddings, Loughran-McDonald financial sentiment, and engineered financial ratios under a strict chronological protocol to prevent look-ahead bias. XGBoost with FinBERT reached a held-out ROC-AUC of 0.633; SHAP analysis showed that linguistic and structural signals are more predictive than the financials themselves. Deployed as a LangGraph multi-agent pipeline with an RL-style optimization loop and an interactive interface giving transparent BUY/HOLD/SELL recommendations.",
+    detail:[
+      "ASU FSE 570 capstone (5-person team).",
+      "Aligned 917 earnings-call transcripts with 1.24M daily price records and 3,125 quarterly financials into an 863-dimensional feature space.",
+      "Fused FinBERT embeddings, Loughran-McDonald financial sentiment, and engineered ratios under a strict chronological protocol (no look-ahead bias).",
+      "XGBoost + FinBERT reached a held-out ROC-AUC of 0.633; SHAP showed language signals beat the financials.",
+      "Deployed as a LangGraph multi-agent pipeline with an RL-style optimization loop and a transparent BUY/HOLD/SELL interface."
+    ],
     stack:["Python","FinBERT","XGBoost","SHAP","LangGraph","Pandas","yfinance","SEC EDGAR"],
     github:"https://github.com/Yashi248",
     demo:"#"
+  },
+  p5:{
+    tag:"Data Engineering · Agentic AI",
+    title:"SQLSpark Optimizer",
+    desc:"A multi-agent system that optimizes SQL→PySpark queries and proves every rewrite is output-identical, measuring routing, cost, and speedup at every stage.",
+    detail:[
+      "Reads a query's physical plan, detects an anti-pattern, and RAG-retrieves the right fix.",
+      "Re-runs both queries to prove the output is unchanged, then measures the speedup and cost.",
+      "Six agents (Translator, Plan-Analyzer, Optimizer, Validator, Orchestrator, Observability) orchestrated with LangGraph; escalates to an LLM for novel patterns.",
+      "TPC-H (sf=1): 100% output-correctness and routing accuracy, 2.22× avg speedup (joins up to 4.3×), ~$0 optimizer cost.",
+      "Audits a 1,000-query workload in ~2.6 min; ran unmodified on Databricks serverless (36 tests passing)."
+    ],
+    stack:["PySpark","DuckDB","SQLGlot","LangGraph","MLflow","pgvector","Neo4j","sentence-transformers"],
+    github:"https://github.com/Yashi248/SQLSparkOptimizer",
+    demo:"https://yashi248.github.io/SQLSparkOptimizer/"
   }
 };
 const modal=document.getElementById("projectModal");
@@ -760,7 +796,8 @@ function openProject(id){
   modalTag.textContent=p.tag;
   modalTitle.textContent=p.title;
   modalDesc.textContent=p.desc;
-  modalDetail.textContent=p.detail;
+  const points=Array.isArray(p.detail)?p.detail:[p.detail];
+  modalDetail.innerHTML=points.map(x=>"<li>"+x+"</li>").join("");
   modalStack.innerHTML=p.stack.map(s=>"<span>"+s+"</span>").join("");
   modalGithub.href=p.github;
   modalDemo.href=p.demo;
